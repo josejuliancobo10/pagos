@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Admin Billing & Suscripciones - FacturaEcuador Pro</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#1e3a8a",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "surface-dim": "#cbdbf5",
+                        "inverse-on-surface": "#eaf1ff",
+                        "surface-container-low": "#eff4ff",
+                        "on-tertiary": "#ffffff",
+                        "secondary": "#0058be",
+                        "on-primary": "#ffffff",
+                        "primary": "#00236f",
+                        "tertiary-fixed-dim": "#d0bcff",
+                        "tertiary-container": "#4e03b8",
+                        "tertiary-fixed": "#e9ddff",
+                        "on-tertiary-fixed-variant": "#5516be",
+                        "surface-tint": "#4059aa",
+                        "surface-variant": "#d3e4fe",
+                        "on-surface-variant": "#444651",
+                        "on-primary-fixed-variant": "#264191",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#b89cff",
+                        "surface-container": "#e5eeff",
+                        "on-secondary-container": "#fefcff",
+                        "on-primary-fixed": "#00164e",
+                        "inverse-surface": "#213145",
+                        "tertiary": "#340081",
+                        "on-surface": "#0b1c30",
+                        "surface": "#f8f9ff",
+                        "outline-variant": "#c5c5d3",
+                        "surface-container-highest": "#d3e4fe",
+                        "secondary-container": "#2170e4",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "primary-fixed": "#dce1ff",
+                        "background": "#f8f9ff",
+                        "on-secondary-fixed": "#001a42",
+                        "on-primary-container": "#90a8ff",
+                        "secondary-fixed": "#d8e2ff",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#dce9ff",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#23005c",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#f8f9ff",
+                        "inverse-primary": "#b6c4ff",
+                        "on-secondary-fixed-variant": "#004395",
+                        "on-background": "#0b1c30",
+                        "outline": "#757682",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6"
+                    },
+                    "fontFamily": {
+                        "sans": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .blur-backdrop {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="bg-[#F8FAFC] text-on-surface font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- TopNavBar (Mobile) -->
+    <header class="md:hidden flex justify-between items-center px-4 py-4 w-full sticky top-0 z-50 bg-white shadow-sm border-b border-outline-variant">
+        <div class="font-black text-xl text-primary flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary" data-weight="fill">cloud_done</span>
+            Admin Billing
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="openNewClientModal()" class="bg-primary text-white p-2 rounded-xl text-xs font-bold flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">add_link</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- SideNavBar (Web) -->
+    <aside id="sidebar" class="bg-white border-r border-outline-variant hidden md:flex flex-col py-6 fixed left-0 top-0 h-full w-[280px] z-40 shadow-sm">
+        <div class="px-6 mb-6 flex flex-col gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-white shadow-md">
+                    <span class="material-symbols-outlined text-2xl" data-weight="fill">cloud_done</span>
+                </div>
+                <div>
+                    <h1 class="text-lg font-black text-on-surface tracking-tight leading-tight">Admin Billing</h1>
+                    <p class="text-xs text-on-surface-variant font-semibold">Payphone & Stripe Recurrente</p>
+                </div>
+            </div>
+            
+            <button onclick="openNewClientModal()" class="w-full bg-primary hover:bg-on-primary-fixed-variant text-white font-bold text-xs py-3.5 px-4 rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-95">
+                <span class="material-symbols-outlined text-[18px]" data-weight="fill">add_link</span>
+                Generar Link de Suscripción
+            </button>
+        </div>
+
+        <nav class="flex-1 px-4 space-y-1.5 text-xs font-bold">
+            <a class="bg-primary text-white rounded-2xl px-4 py-3 flex items-center gap-3 shadow-sm" href="/admin">
+                <span class="material-symbols-outlined text-[20px]" data-weight="fill">dashboard</span>
+                Dashboard & Métricas
+            </a>
+            <a class="text-on-surface-variant hover:bg-slate-100 hover:text-primary rounded-2xl px-4 py-3 flex items-center gap-3 transition-colors" href="#clientesSection">
+                <span class="material-symbols-outlined text-[20px]">group</span>
+                Suscripciones Activas
+            </a>
+            <a class="text-on-surface-variant hover:bg-slate-100 hover:text-primary rounded-2xl px-4 py-3 flex items-center gap-3 transition-colors" href="/" target="_blank">
+                <span class="material-symbols-outlined text-[20px]">open_in_new</span>
+                Ver Portal Cliente
+            </a>
+            <div class="pt-4 px-4 text-[10px] font-extrabold uppercase text-slate-400">Integraciones Pasarelas</div>
+            <div class="px-4 py-2 text-[11px] text-slate-600 space-y-1 bg-slate-50 rounded-xl border border-slate-100 mx-2">
+                <p class="font-bold text-emerald-700 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Payphone (Pichincha) Activo</p>
+                <p class="font-bold text-blue-700 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-500"></span> Stripe Subscriptions Activo</p>
+            </div>
+        </nav>
+
+        <div class="mt-auto px-4 pt-4 border-t border-outline-variant">
+            <a class="text-on-surface-variant hover:bg-rose-50 hover:text-rose-700 rounded-2xl px-4 py-3 flex items-center gap-3 text-xs font-bold transition-colors" href="/">
+                <span class="material-symbols-outlined text-[20px]">logout</span>
+                Salir al Portal
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Canvas -->
+    <main class="flex-1 md:ml-[280px] min-h-screen pb-24">
+        <div class="max-w-[1440px] mx-auto p-4 md:p-10 space-y-8">
+            
+            <!-- Dashboard Header -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-outline-variant pb-6">
+                <div>
+                    <h2 class="text-3xl md:text-4xl font-black text-on-surface tracking-tight">Panel de Suscripciones</h2>
+                    <p class="text-xs md:text-sm text-on-surface-variant mt-1">Control de cobros recurrentes automáticos, retenciones y cancelaciones.</p>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-bold text-on-surface-variant bg-white px-4 py-2 rounded-full border border-outline-variant shadow-sm">
+                    <span class="material-symbols-outlined text-[16px] text-primary">autorenew</span>
+                    Modo Recurrente Activo
+                </div>
+            </div>
+
+            <!-- Key Metrics Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                
+                <!-- Metric 1: Recurring MRR -->
+                <div class="bg-white border border-outline-variant rounded-3xl p-6 shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-primary"></div>
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="p-2.5 bg-primary/10 rounded-2xl text-primary">
+                            <span class="material-symbols-outlined text-2xl font-bold" data-weight="fill">attach_money</span>
+                        </div>
+                        <span class="text-secondary text-xs font-black flex items-center gap-1 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                            +12.5%
+                        </span>
+                    </div>
+                    <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Ingresos Recurrentes (MRR)</p>
+                    <h3 id="metricRevenue" class="text-2xl md:text-3xl font-black text-on-surface mt-1 font-mono">$24,500.00</h3>
+                </div>
+
+                <!-- Metric 2: Active Subscriptions -->
+                <div class="bg-white border border-outline-variant rounded-3xl p-6 shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-emerald-500"></div>
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="p-2.5 bg-emerald-50 rounded-2xl text-emerald-600">
+                            <span class="material-symbols-outlined text-2xl font-bold" data-weight="fill">group</span>
+                        </div>
+                    </div>
+                    <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Suscripciones Activas</p>
+                    <h3 id="metricActive" class="text-2xl md:text-3xl font-black text-on-surface mt-1 font-mono">1,204</h3>
+                </div>
+
+                <!-- Metric 3: Pending / Dunning Retries -->
+                <div class="bg-white border border-outline-variant rounded-3xl p-6 shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-amber-500"></div>
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="p-2.5 bg-amber-50 rounded-2xl text-amber-600">
+                            <span class="material-symbols-outlined text-2xl font-bold" data-weight="fill">error</span>
+                        </div>
+                    </div>
+                    <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Fallos / En Reintento</p>
+                    <h3 id="metricPending" class="text-2xl md:text-3xl font-black text-on-surface mt-1 font-mono">42</h3>
+                </div>
+
+                <!-- Metric 4: Canceled -->
+                <div class="bg-white border border-outline-variant rounded-3xl p-6 shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-rose-500"></div>
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="p-2.5 bg-rose-50 rounded-2xl text-rose-600">
+                            <span class="material-symbols-outlined text-2xl font-bold" data-weight="fill">cancel</span>
+                        </div>
+                    </div>
+                    <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Canceladas</p>
+                    <h3 id="metricCanceled" class="text-2xl md:text-3xl font-black text-on-surface mt-1 font-mono">15</h3>
+                </div>
+            </div>
+
+            <!-- Client Management Section -->
+            <section id="clientesSection" class="bg-white border border-outline-variant rounded-3xl shadow-sm overflow-hidden">
+                <div class="p-6 border-b border-outline-variant flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#F8FAFC]">
+                    <div>
+                        <h3 class="text-xl font-black text-on-surface">Gestión de Suscriptores</h3>
+                        <p class="text-xs text-on-surface-variant mt-0.5">Control de renovaciones automáticas, cobro con Payphone/Stripe y cancelaciones.</p>
+                    </div>
+                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                        <div class="relative w-full sm:w-64">
+                            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-lg">search</span>
+                            <input id="clientSearchInput" oninput="handleSearch(this.value)" class="w-full bg-white border border-outline-variant rounded-xl pl-10 pr-4 py-2.5 text-xs focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-on-surface font-medium" placeholder="Buscar cliente, plan o código..." type="text"/>
+                        </div>
+                        <button onclick="openNewClientModal()" class="bg-primary hover:bg-on-primary-fixed-variant text-white text-xs font-bold py-2.5 px-4 rounded-xl shadow-sm flex items-center gap-1.5 whitespace-nowrap transition-all">
+                            <span class="material-symbols-outlined text-sm">add</span> Nuevo Enlace
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[900px]">
+                        <thead>
+                            <tr class="bg-[#F1F5F9] border-b border-outline-variant text-[11px] uppercase tracking-wider text-slate-500 font-extrabold">
+                                <th class="py-4 px-6">Cliente & Código</th>
+                                <th class="py-4 px-6">Plan Oficial</th>
+                                <th class="py-4 px-6">Cuota Recurrente</th>
+                                <th class="py-4 px-6">Próximo Cobro</th>
+                                <th class="py-4 px-6">Estado</th>
+                                <th class="py-4 px-6 text-right">Acciones de Suscripción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientsTableBody" class="divide-y divide-outline-variant text-xs text-on-surface">
+                            <tr>
+                                <td colspan="6" class="py-8 text-center text-outline">Cargando suscripciones...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal: Generar Link de Pago -->
+    <div id="newClientModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/50 blur-backdrop p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 md:p-8 shadow-2xl border border-outline-variant relative">
+            <div class="flex justify-between items-center mb-6 pb-3 border-b border-outline-variant">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary text-2xl" data-weight="fill">add_link</span>
+                    <h3 class="text-xl font-bold text-on-surface">Generar Link de Suscripción</h3>
+                </div>
+                <button onclick="closeNewClientModal()" class="text-outline hover:text-on-surface p-1 rounded-lg">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <form id="newClientForm" onsubmit="handleCreateClient(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-on-surface mb-1">Nombre de la Empresa *</label>
+                    <input id="ncName" required class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface" placeholder="Ej: Corporación Favorita S.A." type="text"/>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface mb-1">Contacto *</label>
+                        <input id="ncContact" required class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface" placeholder="Ej: María Castro" type="text"/>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface mb-1">Email</label>
+                        <input id="ncEmail" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface" placeholder="mcastro@empresa.ec" type="email"/>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface mb-1">Plan Oficial</label>
+                        <select id="ncPlan" onchange="updateNewClientAmounts()" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface font-semibold">
+                            <option value="Starter">Starter ($19,99/m)</option>
+                            <option value="Business" selected>Business ($29,99/m)</option>
+                            <option value="Pro">Pro ($44,99/m)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface mb-1">Periodicidad</label>
+                        <select id="ncCycle" onchange="updateNewClientAmounts()" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface font-semibold">
+                            <option value="monthly" selected>Mensual</option>
+                            <option value="quarterly">Trimestral (5% dto.)</option>
+                            <option value="annual">Anual (10% dto.)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs flex justify-between">
+                    <div>
+                        <span class="text-slate-500">Cuota Recurrente:</span>
+                        <p id="ncRecurringDisplay" class="font-bold text-primary font-mono">$29.99</p>
+                    </div>
+                    <div>
+                        <span class="text-slate-500">Activación (1 vez):</span>
+                        <p id="ncActivationDisplay" class="font-bold text-on-surface font-mono">$29.99</p>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface mb-1">Código de Acceso Personalizado (Opcional)</label>
+                    <input id="ncCode" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface font-mono uppercase" placeholder="Ej: FAVORITA2024" type="text"/>
+                </div>
+
+                <div class="pt-4 flex gap-3">
+                    <button type="button" onclick="closeNewClientModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl transition-colors text-xs">
+                        Cancelar
+                    </button>
+                    <button type="submit" id="btnCreateClient" class="flex-1 bg-primary hover:bg-on-primary-fixed-variant text-white font-bold py-3 rounded-xl transition-colors text-xs shadow-md flex items-center justify-center gap-2">
+                        Generar Enlace <span class="material-symbols-outlined text-sm">link</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Editar Acuerdo / Suscripción -->
+    <div id="editClientModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/50 blur-backdrop p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl border border-outline-variant relative">
+            <div class="flex justify-between items-center mb-6 pb-3 border-b border-outline-variant">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-secondary text-2xl">edit_document</span>
+                    <h3 class="text-xl font-bold text-on-surface">Editar Suscripción</h3>
+                </div>
+                <button onclick="closeEditModal()" class="text-outline hover:text-on-surface p-1 rounded-lg">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <form id="editClientForm" onsubmit="handleUpdateClient(event)" class="space-y-4">
+                <input type="hidden" id="editClientId"/>
+                
+                <div>
+                    <label class="block text-xs font-bold text-on-surface mb-1">Empresa</label>
+                    <input id="editName" required class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface" type="text"/>
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-bold text-on-surface mb-1">Contacto</label>
+                    <input id="editContact" required class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface" type="text"/>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface mb-1">Plan</label>
+                        <select id="editPlan" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface font-semibold">
+                            <option value="Starter">Starter</option>
+                            <option value="Business">Business</option>
+                            <option value="Pro">Pro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-on-surface mb-1">Estado</label>
+                        <select id="editStatus" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface font-extrabold">
+                            <option value="Activo">Activo (Cobro Auto)</option>
+                            <option value="Fallo de Cobro">Fallo de Cobro</option>
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Cancelada">Cancelada</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface mb-1">Monto Recurrente ($)</label>
+                    <input id="editAmount" required class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface font-mono" type="number" step="0.01"/>
+                </div>
+
+                <div class="pt-4 flex gap-3">
+                    <button type="button" onclick="closeEditModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl transition-colors text-xs">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 bg-secondary hover:opacity-90 text-white font-bold py-3 rounded-xl transition-colors text-xs shadow-md">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 z-[120] hidden bg-primary text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-white/20">
+        <span class="material-symbols-outlined text-green-400 text-xl" data-weight="fill">check_circle</span>
+        <span id="toastMsg" class="text-xs font-bold">¡Enlace copiado al portapapeles!</span>
+    </div>
+
+    <!-- Admin JS -->
+    <script src="/js/admin.js"></script>
+</body>
+</html>

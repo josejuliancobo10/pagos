@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Suscripción y Planes | FacturaEcuador Pro</title>
+    <!-- Material Symbols & Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#1e3a8a",
+                        "secondary-fixed-dim": "#adc6ff",
+                        "surface-dim": "#cbdbf5",
+                        "inverse-on-surface": "#eaf1ff",
+                        "surface-container-low": "#eff4ff",
+                        "on-tertiary": "#ffffff",
+                        "secondary": "#0058be",
+                        "on-primary": "#ffffff",
+                        "primary": "#00236f",
+                        "tertiary-fixed-dim": "#d0bcff",
+                        "tertiary-container": "#4e03b8",
+                        "tertiary-fixed": "#e9ddff",
+                        "on-tertiary-fixed-variant": "#5516be",
+                        "surface-tint": "#4059aa",
+                        "surface-variant": "#d3e4fe",
+                        "on-surface-variant": "#444651",
+                        "on-primary-fixed-variant": "#264191",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#b89cff",
+                        "surface-container": "#e5eeff",
+                        "on-secondary-container": "#fefcff",
+                        "on-primary-fixed": "#00164e",
+                        "inverse-surface": "#213145",
+                        "tertiary": "#340081",
+                        "on-surface": "#0b1c30",
+                        "surface": "#f8f9ff",
+                        "outline-variant": "#c5c5d3",
+                        "surface-container-highest": "#d3e4fe",
+                        "secondary-container": "#2170e4",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "primary-fixed": "#dce1ff",
+                        "background": "#f8f9ff",
+                        "on-secondary-fixed": "#001a42",
+                        "on-primary-container": "#90a8ff",
+                        "secondary-fixed": "#d8e2ff",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#dce9ff",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#23005c",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#f8f9ff",
+                        "inverse-primary": "#b6c4ff",
+                        "on-secondary-fixed-variant": "#004395",
+                        "on-background": "#0b1c30",
+                        "outline": "#757682",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "sans": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 20px;
+            line-height: 1;
+            display: inline-block;
+            white-space: nowrap;
+            direction: ltr;
+            -webkit-font-smoothing: antialiased;
+        }
+        .shadow-ambient-lg {
+            box-shadow: 0 12px 35px -10px rgba(0, 35, 111, 0.08);
+        }
+        .blur-backdrop {
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+    </style>
+</head>
+<body class="bg-[#F8FAFC] text-on-surface antialiased min-h-screen flex flex-col font-sans">
+
+    <!-- Lock Screen Modal -->
+    <div id="lockScreen" class="fixed inset-0 z-[100] flex items-center justify-center bg-surface/85 blur-backdrop transition-opacity duration-300">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full mx-4 border border-outline-variant text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-1 bg-primary"></div>
+            <div class="w-14 h-14 bg-surface-container rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
+                <span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">lock</span>
+            </div>
+            <h2 class="text-2xl font-bold text-on-surface mb-2">Acceso Privado</h2>
+            <p class="text-sm text-on-surface-variant mb-6">Ingresa tu código de cliente para ver tu propuesta.</p>
+            
+            <form id="lockForm" class="space-y-4">
+                <div>
+                    <input id="accessCodeInput" class="w-full px-4 py-3 rounded-xl border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-sm bg-surface text-center tracking-wider font-semibold uppercase font-mono" placeholder="Ej: TECHCORP" required type="text" autocomplete="off" value="TECHCORP"/>
+                    <p id="lockErrorMsg" class="text-error text-xs mt-2 hidden"></p>
+                </div>
+                <button id="unlockBtn" class="w-full bg-primary hover:bg-on-primary-fixed-variant text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm active:scale-[0.98]" type="submit">
+                    Desbloquear <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                </button>
+            </form>
+            <p class="text-[11px] text-outline mt-4">Demo: usa el código <strong>TECHCORP</strong> o <strong>1234</strong></p>
+        </div>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <div id="mainContent" class="flex-grow flex flex-col">
+        
+        <!-- TopNavBar -->
+        <nav class="bg-white text-primary font-medium flex justify-between items-center px-4 md:px-10 py-4 w-full sticky top-0 z-50 border-b border-outline-variant shadow-sm">
+            <div class="flex items-center gap-8">
+                <div class="font-black text-xl md:text-2xl text-primary flex items-center gap-2 cursor-pointer" onclick="window.location.reload()">
+                    <span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings: 'FILL' 1;">cloud_done</span>
+                    <span>FacturaEcuador <span class="text-secondary font-black">Pro</span></span>
+                </div>
+            </div>
+            <div class="hidden md:flex gap-6 items-center text-sm">
+                <a class="text-on-surface-variant hover:text-primary transition-colors px-3 py-2 rounded-lg" href="#planes">Planes y Precios</a>
+                <a class="text-on-surface-variant hover:text-primary transition-colors px-3 py-2 rounded-lg" href="#pago">Pasarela de Suscripción</a>
+                <a class="text-on-surface-variant hover:text-primary transition-colors px-3 py-2 rounded-lg" href="#suscripcionActiva">Mi Suscripción</a>
+                <a class="text-primary font-bold border-b-2 border-primary pb-1 px-3 py-2" href="#">Garantía & Cancelación</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="/admin" class="bg-surface-container hover:bg-surface-container-highest text-primary font-bold text-xs md:text-sm px-4 py-2.5 rounded-xl transition-colors flex items-center gap-2 border border-outline-variant shadow-sm">
+                    Panel Admin <span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Workspace -->
+        <main class="flex-grow w-full max-w-[1360px] mx-auto px-4 md:px-8 py-10 md:py-14 space-y-16">
+            
+            <!-- Hero & Title (From Official Graphic) -->
+            <section class="text-center space-y-4 max-w-4xl mx-auto">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-primary/10 text-primary rounded-full text-xs font-bold border border-primary/20 shadow-sm">
+                    <span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                    Pago Recurrente Automático &bull; Sin Contratos Forzosos
+                </div>
+                <h1 class="text-3xl md:text-5xl font-black text-on-surface tracking-tight leading-tight">
+                    Elige el plan ideal para tu negocio
+                </h1>
+                <p class="text-base md:text-lg text-on-surface-variant font-medium">
+                    Sitio web profesional + correo corporativo + herramientas inteligentes para crecer
+                </p>
+                
+                <!-- Personalized Agreement Box -->
+                <div class="mt-6 bg-white border border-outline-variant p-6 rounded-2xl shadow-sm text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-primary text-white flex items-center justify-center shrink-0 shadow-md">
+                            <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">handshake</span>
+                        </div>
+                        <div>
+                            <h3 id="clientGreetingName" class="text-lg font-bold text-on-surface">Hola Juan Pérez,</h3>
+                            <p id="clientGreetingCompany" class="text-xs md:text-sm text-on-surface-variant">Acuerdo especial para <strong id="companyName">TechCorp S.A.</strong> con cobro automático recurrente.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 bg-surface-container px-3 py-1.5 rounded-xl border border-outline-variant self-end sm:self-auto">
+                        <span class="text-xs text-outline-variant font-semibold">Código:</span>
+                        <span id="clientCodeDisplay" class="font-mono text-xs font-bold text-primary">TECHCORP</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Billing Cycle Switcher -->
+            
+
+            <!-- 3 Official Pricing Cards (STARTER, BUSINESS, PRO) -->
+            
+<section id="planes" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-[1300px] mx-auto items-stretch">
+    <!-- 1. BASIC CARD -->
+    <div id="cardBasic" class="plan-card bg-white border-2 border-[#166534] rounded-3xl p-5 flex flex-col relative shadow-sm hover:shadow-2xl transition-all duration-300 cursor-pointer" onclick="selectPlan('Basic')">
+        <div class="flex items-center gap-2 mb-3">
+            <div class="w-10 h-10 rounded-full bg-[#166534] text-white flex items-center justify-center shadow-md shrink-0">
+                <span class="material-symbols-outlined">rocket_launch</span>
+            </div>
+            <div>
+                <h3 class="text-xl font-black text-on-surface tracking-tight uppercase">BASIC</h3>
+                <p class="text-[10px] text-on-surface-variant leading-tight">Ideal para emprendedores que inician</p>
+            </div>
+        </div>
+        <div class="my-2 pb-3 border-b border-outline-variant text-center">
+            <div class="flex justify-center items-baseline gap-1">
+                <span class="text-4xl font-black text-[#166534] tracking-tight">$99,99</span>
+                <span class="text-xs font-bold text-on-surface-variant">/año</span>
+            </div>
+        </div>
+        <div class="space-y-3 my-3 flex-grow text-[11px] leading-relaxed text-on-surface">
+            <p class="font-extrabold text-[10px] uppercase tracking-wider text-slate-400">TODO LO QUE INCLUYE:</p>
+            <ul class="space-y-1.5 pl-0 text-slate-600">
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#166534] text-[14px]">check_circle</span> Landing page profesional</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#166534] text-[14px]">check_circle</span> Dominio propio</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#166534] text-[14px]">check_circle</span> Hosting y SSL</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#166534] text-[14px]">check_circle</span> Responsive</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#166534] text-[14px]">check_circle</span> Actualizaciones y mantenimiento</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#166534] text-[14px]">check_circle</span> Formulario de contacto</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#166534] text-[14px]">check_circle</span> Botón directo a WhatsApp</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#166534] text-[14px]">check_circle</span> Ícono en la pestaña</li>
+            </ul>
+            <div class="bg-slate-50 border border-slate-100 rounded-lg p-2 text-center text-[10px] font-bold text-slate-500 mt-2 flex items-center justify-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">schedule</span> ENTREGA DE 2 A 3 DÍAS
+            </div>
+        </div>
+        <button id="btnSelectBasic" class="w-full mt-2 bg-[#166534] hover:bg-green-900 text-white font-bold py-3 rounded-xl transition-all shadow-md text-[13px]">
+            Elegir plan Basic
+        </button>
+    </div>
+
+    <!-- 2. STARTER CARD -->
+    <div id="cardStarter" class="plan-card bg-white border-2 border-[#0058be] rounded-3xl p-5 flex flex-col relative shadow-sm hover:shadow-2xl transition-all duration-300 cursor-pointer" onclick="selectPlan('Starter')">
+        <div class="flex items-center gap-2 mb-3">
+            <div class="w-10 h-10 rounded-full bg-[#0058be] text-white flex items-center justify-center shadow-md shrink-0">
+                <span class="material-symbols-outlined">web</span>
+            </div>
+            <div>
+                <h3 class="text-xl font-black text-on-surface tracking-tight uppercase">STARTER</h3>
+                <p class="text-[10px] text-on-surface-variant leading-tight">Ideal para emprendedores individuales</p>
+            </div>
+        </div>
+        <div class="my-2 pb-3 border-b border-outline-variant text-center">
+            <div class="flex justify-center items-baseline gap-1">
+                <span class="text-4xl font-black text-[#0058be] tracking-tight">$179,99</span>
+                <span class="text-xs font-bold text-on-surface-variant">/año</span>
+            </div>
+        </div>
+        <div class="space-y-3 my-3 flex-grow text-[11px] leading-relaxed text-on-surface">
+            <p class="font-extrabold text-[10px] uppercase tracking-wider text-slate-400">TODO LO QUE INCLUYE:</p>
+            <ul class="space-y-1.5 pl-0 text-slate-600">
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#0058be] text-[14px]">check_circle</span> Página web profesional</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#0058be] text-[14px]">check_circle</span> Hasta 5 páginas</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#0058be] text-[14px]">check_circle</span> Dominio propio</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#0058be] text-[14px]">check_circle</span> Hosting + SSL</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#0058be] text-[14px]">check_circle</span> Adaptada a todos los dispositivos</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#0058be] text-[14px]">check_circle</span> Ícono en la pestaña</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#0058be] text-[14px]">check_circle</span> Formulario de contacto</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#0058be] text-[14px]">check_circle</span> Botón directo a WhatsApp</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#0058be] text-[14px]">check_circle</span> Mapa de ubicación</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#0058be] text-[14px]">check_circle</span> Enlaces a redes sociales</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#0058be] text-[14px]">check_circle</span> Actualizaciones y mantenimiento</li>
+            </ul>
+            <div class="bg-blue-50 border border-blue-100 rounded-lg p-3 mt-2">
+                <p class="font-bold text-[#0058be] flex items-center gap-1 text-[10px] uppercase mb-1"><span class="material-symbols-outlined text-[14px]">mail</span> CORREO CORPORATIVO</p>
+                <ul class="space-y-1 text-slate-600">
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#0058be] text-[12px]">check</span> 1 buzón corporativo</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#0058be] text-[12px]">check</span> 5 GB de almacenamiento</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#0058be] text-[12px]">check</span> 5 alias de email</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#0058be] text-[12px]">check</span> 5 reglas de reenvío</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#0058be] text-[12px]">check</span> Backup completo</li>
+                </ul>
+            </div>
+            <div class="bg-slate-50 border border-slate-100 rounded-lg p-2 text-center text-[10px] font-bold text-slate-500 mt-2 flex items-center justify-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">schedule</span> ENTREGA DE 3 A 5 DÍAS
+            </div>
+        </div>
+        <button id="btnSelectStarter" class="w-full mt-2 bg-[#0058be] hover:bg-blue-800 text-white font-bold py-3 rounded-xl transition-all shadow-md text-[13px]">
+            Elegir plan Starter
+        </button>
+    </div>
+
+    <!-- 3. BUSINESS CARD -->
+    <div id="cardBusiness" class="plan-card bg-white border-2 border-[#4e03b8] rounded-3xl p-5 flex flex-col relative shadow-xl transform lg:-translate-y-2 ring-4 ring-purple-50 transition-all duration-300 cursor-pointer" onclick="selectPlan('Business')">
+        <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#4e03b8] text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-md whitespace-nowrap">
+            ★ MÁS VENDIDO
+        </div>
+        <div class="flex items-center gap-2 mb-3 mt-1">
+            <div class="w-10 h-10 rounded-full bg-[#4e03b8] text-white flex items-center justify-center shadow-md shrink-0">
+                <span class="material-symbols-outlined">business_center</span>
+            </div>
+            <div>
+                <h3 class="text-xl font-black text-on-surface tracking-tight uppercase">BUSINESS</h3>
+                <p class="text-[10px] text-on-surface-variant leading-tight">Ideal para pequeñas empresas</p>
+            </div>
+        </div>
+        <div class="my-2 pb-3 border-b border-outline-variant text-center">
+            <div class="flex justify-center items-baseline gap-1">
+                <span class="text-4xl font-black text-[#4e03b8] tracking-tight">$269,99</span>
+                <span class="text-xs font-bold text-on-surface-variant">/año</span>
+            </div>
+        </div>
+        <div class="space-y-3 my-3 flex-grow text-[11px] leading-relaxed text-on-surface">
+            <p class="font-extrabold text-[10px] uppercase tracking-wider text-slate-400">TODO LO QUE INCLUYE:</p>
+            <ul class="space-y-1.5 pl-0 text-slate-600">
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[14px]">check_circle</span> Página web profesional</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[14px]">check_circle</span> Hasta 8 páginas</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[14px]">check_circle</span> Dominio propio</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[14px]">check_circle</span> Hosting + SSL</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[14px]">check_circle</span> Adaptada a todos los dispositivos</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[14px]">check_circle</span> Ícono en la pestaña</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[14px]">check_circle</span> Formulario de contacto</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[14px]">check_circle</span> Botón directo a WhatsApp</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[14px]">check_circle</span> Mapa de ubicación</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[14px]">check_circle</span> Enlaces a redes sociales</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[14px]">check_circle</span> Actualizaciones y mantenimiento</li>
+            </ul>
+            <div class="bg-purple-50 border border-purple-100 rounded-lg p-3 mt-2">
+                <p class="font-bold text-[#4e03b8] flex items-center gap-1 text-[10px] uppercase mb-1"><span class="material-symbols-outlined text-[14px]">language</span> FUNCIONALIDADES AVANZADAS</p>
+                <ul class="space-y-1 text-slate-600">
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[12px]">check</span> Backup completo</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[12px]">check</span> Chatbot web</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[12px]">check</span> Optimizado para Google</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[12px]">check</span> Reporte de estadísticas</li>
+                </ul>
+            </div>
+            <div class="bg-purple-50 border border-purple-100 rounded-lg p-3 mt-2">
+                <p class="font-bold text-[#4e03b8] flex items-center gap-1 text-[10px] uppercase mb-1"><span class="material-symbols-outlined text-[14px]">mail</span> CORREO CORPORATIVO</p>
+                <ul class="space-y-1 text-slate-600">
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[12px]">check</span> 1 buzón corporativo</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[12px]">check</span> 20 reglas de reenvío</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[12px]">check</span> 20 GB de almacenamiento</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[12px]">check</span> IA para gestionar correo</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[12px]">check</span> 10 alias de email</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[12px]">check</span> Saber quién abrió tus emails</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#4e03b8] text-[12px]">check</span> Respuestas automáticas</li>
+                </ul>
+            </div>
+            <div class="bg-slate-50 border border-slate-100 rounded-lg p-2 text-center text-[10px] font-bold text-slate-500 mt-2 flex items-center justify-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">schedule</span> ENTREGA DE 3 A 5 DÍAS
+            </div>
+        </div>
+        <button id="btnSelectBusiness" class="w-full mt-2 bg-[#4e03b8] hover:bg-purple-900 text-white font-black py-3.5 rounded-xl transition-all shadow-md text-[13px]">
+            Elegir plan Business
+        </button>
+    </div>
+
+    <!-- 4. PRO CARD -->
+    <div id="cardPro" class="plan-card bg-white border-2 border-[#15803d] rounded-3xl p-5 flex flex-col relative shadow-sm hover:shadow-2xl transition-all duration-300 cursor-pointer" onclick="selectPlan('Pro')">
+        <div class="flex items-center gap-2 mb-3">
+            <div class="w-10 h-10 rounded-full bg-[#15803d] text-white flex items-center justify-center shadow-md shrink-0">
+                <span class="material-symbols-outlined">diamond</span>
+            </div>
+            <div>
+                <h3 class="text-xl font-black text-on-surface tracking-tight uppercase">PRO</h3>
+                <p class="text-[10px] text-on-surface-variant leading-tight">Ideal para equipos de alto rendimiento</p>
+            </div>
+        </div>
+        <div class="my-2 pb-3 border-b border-outline-variant text-center">
+            <div class="flex justify-center items-baseline gap-1">
+                <span class="text-4xl font-black text-[#15803d] tracking-tight">$449,99</span>
+                <span class="text-xs font-bold text-on-surface-variant">/año</span>
+            </div>
+        </div>
+        <div class="space-y-3 my-3 flex-grow text-[11px] leading-relaxed text-on-surface">
+            <p class="font-extrabold text-[10px] uppercase tracking-wider text-slate-400">TODO LO QUE INCLUYE:</p>
+            <ul class="space-y-1.5 pl-0 text-slate-600">
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#15803d] text-[14px]">check_circle</span> Página web profesional</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#15803d] text-[14px]">check_circle</span> Hasta 10 páginas</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#15803d] text-[14px]">check_circle</span> Dominio propio</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#15803d] text-[14px]">check_circle</span> Hosting + SSL</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#15803d] text-[14px]">check_circle</span> Adaptada a todos los dispositivos</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#15803d] text-[14px]">check_circle</span> Ícono en la pestaña</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#15803d] text-[14px]">check_circle</span> Formulario de contacto</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#15803d] text-[14px]">check_circle</span> Botón directo a WhatsApp</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#15803d] text-[14px]">check_circle</span> Mapa de ubicación</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#15803d] text-[14px]">check_circle</span> Enlaces a redes sociales</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#15803d] text-[14px]">check_circle</span> Integración reservas/cotizadores</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#15803d] text-[14px]">check_circle</span> Panel administrativo</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#15803d] text-[14px]">check_circle</span> Capacitación</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#15803d] text-[14px]">check_circle</span> Ecommerce (tienda virtual)</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#15803d] text-[14px]">check_circle</span> Cobros con tarjeta</li>
+                <li class="flex gap-1.5 items-start"><span class="material-symbols-outlined text-[#15803d] text-[14px]">check_circle</span> Actualizaciones y mantenimiento</li>
+            </ul>
+            <div class="bg-green-50 border border-green-100 rounded-lg p-3 mt-2">
+                <p class="font-bold text-[#15803d] flex items-center gap-1 text-[10px] uppercase mb-1"><span class="material-symbols-outlined text-[14px]">language</span> FUNCIONALIDADES AVANZADAS</p>
+                <ul class="space-y-1 text-slate-600">
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#15803d] text-[12px]">check</span> Backup completo</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#15803d] text-[12px]">check</span> Chatbot web</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#15803d] text-[12px]">check</span> Optimizado para Google</li>
+                </ul>
+            </div>
+            <div class="bg-green-50 border border-green-100 rounded-lg p-3 mt-2">
+                <p class="font-bold text-[#15803d] flex items-center gap-1 text-[10px] uppercase mb-1"><span class="material-symbols-outlined text-[14px]">mail</span> CORREO CORPORATIVO</p>
+                <ul class="space-y-1 text-slate-600">
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#15803d] text-[12px]">check</span> 1 buzón corporativo</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#15803d] text-[12px]">check</span> 20 reglas de reenvío</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#15803d] text-[12px]">check</span> 20 GB de almacenamiento</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#15803d] text-[12px]">check</span> IA para gestionar correo</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#15803d] text-[12px]">check</span> 10 alias de email</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#15803d] text-[12px]">check</span> Saber quién abrió tus emails</li>
+                    <li class="flex gap-1 items-start"><span class="material-symbols-outlined text-[#15803d] text-[12px]">check</span> Respuestas automáticas</li>
+                </ul>
+            </div>
+            <div class="bg-slate-50 border border-slate-100 rounded-lg p-2 text-center text-[10px] font-bold text-slate-500 mt-2 flex items-center justify-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">schedule</span> ENTREGA DE 10 A 15 DÍAS
+            </div>
+        </div>
+        <button id="btnSelectPro" class="w-full mt-2 bg-[#15803d] hover:bg-green-900 text-white font-bold py-3 rounded-xl transition-all shadow-md text-[13px]">
+            Elegir plan Pro
+        </button>
+    </div>
+</section>
+
+
+            <!-- Bottom Trust Badges (From Graphic) -->
+            <section class="grid grid-cols-2 md:grid-cols-4 gap-4 py-8 border-y border-outline-variant bg-white rounded-3xl px-6 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 rounded-xl bg-blue-50 text-[#0058be]">
+                        <span class="material-symbols-outlined text-2xl">verified_user</span>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold uppercase text-on-surface">SSL INCLUIDO</h4>
+                        <p class="text-[11px] text-on-surface-variant">Tu sitio siempre seguro</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 rounded-xl bg-purple-50 text-[#4e03b8]">
+                        <span class="material-symbols-outlined text-2xl">headset_mic</span>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold uppercase text-on-surface">SOPORTE TÉCNICO</h4>
+                        <p class="text-[11px] text-on-surface-variant">Te ayudamos siempre</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 rounded-xl bg-amber-50 text-amber-700">
+                        <span class="material-symbols-outlined text-2xl">sync</span>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold uppercase text-on-surface">ACTUALIZACIONES</h4>
+                        <p class="text-[11px] text-on-surface-variant">Tu web siempre al día</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 rounded-xl bg-emerald-50 text-[#059669]">
+                        <span class="material-symbols-outlined text-2xl">lock</span>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold uppercase text-on-surface">INFORMACIÓN SEGURA</h4>
+                        <p class="text-[11px] text-on-surface-variant">Protegemos tus datos</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Payment & Auto-Recurring Subscription Section -->
+            <section id="pago" class="max-w-[1050px] mx-auto bg-white rounded-3xl shadow-2xl border border-outline-variant overflow-hidden flex flex-col md:flex-row">
+                
+                <!-- Order Summary (Left) -->
+                <div class="w-full md:w-5/12 bg-[#F8FAFC] p-8 border-b md:border-b-0 md:border-r border-outline-variant flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 mb-6">
+                            <span class="material-symbols-outlined text-primary text-2xl">shopping_cart_checkout</span>
+                            <h3 class="text-xl font-bold text-on-surface">Resumen de Suscripción</h3>
+                        </div>
+
+                        <div class="space-y-4 text-sm mb-6">
+                            <div class="flex justify-between items-start pb-3 border-b border-outline-variant">
+                                <div>
+                                    <p id="summaryPlanTitle" class="font-bold text-on-surface text-base">Plan Business</p>
+                                    <p id="summaryCycleTitle" class="text-xs text-on-surface-variant">Ciclo Mensual Recurrente</p>
+                                </div>
+                                <span id="summaryPlanAmount" class="font-bold text-on-surface font-mono">$29.99</span>
+                            </div>
+
+                            <div class="flex justify-between items-center text-on-surface-variant">
+                                <span>Cuota recurrente del plan:</span>
+                                <span id="summaryRecurringPlan" class="font-semibold font-mono text-on-surface">$29.99</span>
+                            </div>
+
+                            
+                                <span id="summaryFirstPayment" class="text-3xl font-black text-primary font-mono">$59.98</span>
+                            </div>
+                            
+                            <div class="mt-3 pt-3 border-t border-slate-100 flex justify-between items-center text-xs">
+                                <span class="text-slate-600 font-medium">Siguientes ciclos automáticos:</span>
+                                <span id="summaryNextCycles" class="font-black text-emerald-700 font-mono">$29.99/mes</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-50 border border-blue-200 rounded-xl p-3.5 text-xs text-blue-950 space-y-1">
+                            <p class="font-bold flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-sm text-[#0058be]">autorenew</span>
+                                Suscripción Inteligente sin Plazos Forzosos
+                            </p>
+                            <p class="text-[11px] text-blue-800">
+                                Tu tarjeta se cobrará automáticamente cada ciclo. Puedes <strong>cancelar con 1 clic</strong> en cualquier momento desde tu confirmación o recibo.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex items-center gap-3 text-xs text-slate-500">
+                        <span class="material-symbols-outlined text-emerald-600 text-2xl">lock</span>
+                        <span>Tokenización segura encriptada con <strong>Payphone (Banco Pichincha)</strong> o Stripe.</span>
+                    </div>
+                </div>
+
+                <!-- Payment Form (Right) -->
+                <div class="w-full md:w-7/12 p-8">
+                    <h3 class="text-xl font-bold text-on-surface mb-6 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">credit_card</span>
+                        Método de Pago Seguro
+                    </h3>
+                    
+                    <!-- Gateway Switcher -->
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <label class="cursor-pointer" onclick="setPaymentMethod('payphone')">
+                            <input id="payRadioPayphone" checked class="peer sr-only" name="paymentGateway" type="radio"/>
+                            <div class="border-2 border-outline-variant peer-checked:border-primary peer-checked:bg-blue-50/50 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 transition-all shadow-sm">
+                                <span class="material-symbols-outlined text-on-surface-variant peer-checked:text-primary text-2xl">account_balance</span>
+                                <span class="text-xs md:text-sm font-extrabold text-on-surface text-center">Payphone (Pichincha)</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer" onclick="setPaymentMethod('card')">
+                            <input id="payRadioCard" class="peer sr-only" name="paymentGateway" type="radio"/>
+                            <div class="border-2 border-outline-variant peer-checked:border-primary peer-checked:bg-blue-50/50 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 transition-all shadow-sm">
+                                <span class="material-symbols-outlined text-on-surface-variant peer-checked:text-primary text-2xl">credit_card</span>
+                                <span class="text-xs md:text-sm font-extrabold text-on-surface text-center">Tarjeta Internacional</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Form -->
+                    <form id="paymentForm" class="space-y-4" onsubmit="handlePaymentSubmit(event)">
+                        
+                        <div>
+                            <label class="block text-xs font-bold text-on-surface mb-1">Nombre del Titular de la Tarjeta</label>
+                            <input id="cardHolder" class="w-full px-4 py-3 rounded-xl border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm bg-surface" required type="text" value="Juan Pérez"/>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-on-surface mb-1">Número de Tarjeta (Débito o Crédito)</label>
+                            <div class="relative">
+                                <input id="cardNumber" class="w-full px-4 py-3 pl-11 rounded-xl border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm bg-surface font-mono" placeholder="4111 •••• •••• 8892" required type="text" maxlength="19" value="4111 8291 0392 8892"/>
+                                <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline">credit_card</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-on-surface mb-1">Vencimiento (MM/AA)</label>
+                                <input id="cardExp" class="w-full px-4 py-3 rounded-xl border border-outline-variant focus:border-primary text-sm bg-surface text-center font-mono" placeholder="MM/YY" required type="text" maxlength="5" value="12/28"/>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-on-surface mb-1">Código CVC / CVV</label>
+                                <input id="cardCvc" class="w-full px-4 py-3 rounded-xl border border-outline-variant focus:border-primary text-sm bg-surface text-center font-mono" placeholder="123" required type="password" maxlength="4" value="882"/>
+                            </div>
+                        </div>
+
+                        <!-- Recurring Terms Checkbox -->
+                        <div class="pt-2">
+                            <label class="flex items-start gap-2.5 cursor-pointer text-xs text-on-surface-variant">
+                                <input type="checkbox" checked required class="mt-0.5 rounded border-outline-variant text-primary focus:ring-primary"/>
+                                <span>Acepto activar la <strong>suscripción con cobro recurrente automático</strong>. Entiendo que puedo cancelar cuando lo desee sin penalización.</span>
+                            </label>
+                        </div>
+
+                        <div class="pt-4">
+                            <button id="btnSubmitPayment" class="w-full bg-primary hover:bg-on-primary-fixed-variant text-white font-black py-4 rounded-2xl shadow-xl transition-all flex justify-center items-center gap-2 text-base active:scale-[0.99]" type="submit">
+                                <span id="btnSubmitText">Autorizar Suscripción por $59.98</span> 
+                                <span class="material-symbols-outlined">lock</span>
+                            </button>
+                            <p class="text-center text-[11px] text-outline mt-3 flex items-center justify-center gap-1.5">
+                                <span class="material-symbols-outlined text-sm text-emerald-600">verified</span>
+                                Tokenización Bancaria Segura con Banco Pichincha & Payphone Ecuador
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Active Subscription Management Section (for self-service cancellation) -->
+            <section id="suscripcionActiva" class="max-w-[1050px] mx-auto bg-white border border-outline-variant rounded-3xl p-8 shadow-sm">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b border-outline-variant">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary text-2xl">manage_accounts</span>
+                            <h3 class="text-xl font-black text-on-surface">Gestión de tu Suscripción</h3>
+                        </div>
+                        <p class="text-xs text-on-surface-variant mt-1">Controla tu estado de facturación, pasarela de pago o solicita la cancelación inmediata.</p>
+                    </div>
+                    <div id="liveStatusBadge">
+                        <span class="inline-flex items-center gap-1.5 text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full text-xs font-extrabold">
+                            <span class="w-2 h-2 rounded-full bg-emerald-600"></span> Suscripción Activa
+                        </span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 my-6 text-sm">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <p class="text-xs text-slate-500 font-bold uppercase">Plan Actual</p>
+                        <p id="activePlanName" class="text-lg font-black text-on-surface mt-1">Business ($29,99/mes)</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <p class="text-xs text-slate-500 font-bold uppercase">Próximo Cobro Automático</p>
+                        <p id="activeNextBilling" class="text-lg font-black text-primary mt-1">23 Sep 2026</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <p class="text-xs text-slate-500 font-bold uppercase">Pasarela Conectada</p>
+                        <p id="activeGatewayName" class="text-lg font-black text-on-surface mt-1">Payphone (Tokenizado)</p>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <p class="text-xs text-slate-500">¿Deseas detener las renovaciones futuras? Tu cuenta permanecerá activa hasta el fin de tu ciclo pagado.</p>
+                    <button onclick="openCancelModal()" class="w-full sm:w-auto bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs px-5 py-3 rounded-xl transition-colors flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-sm">cancel</span> Cancelar Suscripción
+                    </button>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Success Modal -->
+        <div id="successModal" class="fixed inset-0 z-[110] hidden flex items-center justify-center bg-black/60 blur-backdrop p-4">
+            <div class="bg-white rounded-3xl max-w-md w-full p-8 text-center shadow-2xl border border-outline-variant relative">
+                <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="material-symbols-outlined text-4xl font-bold">check_circle</span>
+                </div>
+                <h3 class="text-2xl font-black text-on-surface mb-2">¡Suscripción Activada!</h3>
+                <p class="text-xs md:text-sm text-on-surface-variant mb-6">
+                    Tu suscripción al plan <strong id="modalPlanName">Business</strong> ha sido procesada con éxito para <strong id="modalCompanyName">TechCorp S.A.</strong> con cobro automático recurrente.
+                </p>
+                
+                <div class="bg-slate-50 rounded-2xl p-4 text-left space-y-2 text-xs mb-6 border border-slate-200">
+                    <div class="flex justify-between"><span class="text-slate-500">Referencia de Pago:</span><span id="modalRef" class="font-mono font-bold text-primary">TXN-83921</span></div>
+                    <div class="flex justify-between"><span class="text-slate-500">Primer Cobro (con activación):</span><span id="modalAmount" class="font-bold text-on-surface font-mono">$59.98 USD</span></div>
+                    <div class="flex justify-between"><span class="text-slate-500">Próximo Cobro Automático:</span><span id="modalNextDate" class="font-bold text-emerald-700">23 Sep 2026</span></div>
+                    <div class="flex justify-between"><span class="text-slate-500">Modo de Cobro:</span><span class="text-primary font-bold">Recurrente Automático</span></div>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <button onclick="closeSuccessModal()" class="w-full bg-primary hover:bg-on-primary-fixed-variant text-white font-bold py-3.5 rounded-xl transition-colors text-sm shadow-md">
+                        Aceptar y Ver Mi Suscripción
+                    </button>
+                    <button onclick="openCancelModal()" class="w-full text-rose-600 hover:underline text-xs py-2 font-semibold">
+                        Cancelar suscripción si fue un error
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cancel Confirmation Modal -->
+        <div id="cancelModal" class="fixed inset-0 z-[120] hidden flex items-center justify-center bg-black/60 blur-backdrop p-4">
+            <div class="bg-white rounded-3xl max-w-md w-full p-8 text-center shadow-2xl border border-outline-variant relative">
+                <div class="w-14 h-14 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="material-symbols-outlined text-3xl font-bold">warning</span>
+                </div>
+                <h3 class="text-xl font-black text-on-surface mb-2">¿Cancelar Suscripción?</h3>
+                <p class="text-xs text-on-surface-variant mb-6">
+                    Al cancelar, se <strong>detendrán inmediatamente los cobros automáticos</strong> en tu tarjeta. No se te volverá a facturar.
+                </p>
+
+                <div class="text-left mb-4">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Motivo de cancelación (opcional)</label>
+                    <select id="cancelReasonSelect" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-slate-50">
+                        <option value="Ya no necesito el servicio">Ya no necesito el servicio</option>
+                        <option value="Costos">Presupuesto / Costos</option>
+                        <option value="Cambio de proveedor">Cambio de proveedor</option>
+                        <option value="Otro">Otro motivo</option>
+                    </select>
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="closeCancelModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl transition-colors text-xs">
+                        Mantener Activa
+                    </button>
+                    <button onclick="confirmCancelSubscription()" id="btnConfirmCancel" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-xl transition-colors text-xs shadow-md">
+                        Sí, Cancelar Ahora
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-white text-primary border-t border-outline-variant w-full py-8 px-4 md:px-10 flex flex-col md:flex-row justify-between items-center gap-4 mt-auto">
+            <div class="text-xl font-bold text-primary flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">cloud_done</span> FacturaEcuador Pro
+            </div>
+            <div class="flex flex-wrap justify-center gap-6 text-xs text-outline">
+                <a class="hover:text-on-surface transition-colors" href="#">Términos de Suscripción</a>
+                <a class="hover:text-on-surface transition-colors" href="#">Política de Cancelación</a>
+                <a class="hover:text-on-surface transition-colors" href="#">Banco Pichincha / Payphone</a>
+                <a class="hover:text-on-surface transition-colors" href="#">Contacto</a>
+            </div>
+            <p class="text-xs text-outline text-center md:text-right">
+                © 2024 FacturaEcuador Pro. Transacciones recurrentes automáticas con encriptación SSL de grado bancario.
+            </p>
+        </footer>
+    </div>
+
+    <!-- App JS -->
+    <script src="/js/app.js"></script>
+</body>
+</html>
