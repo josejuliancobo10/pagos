@@ -25,18 +25,7 @@ function showAdminLock() {
 }
 
 // Intercept fetch wrapper
-async function adminFetch(url, options = {}) {
-    if (!options.headers) options.headers = {};
-    options.headers['Authorization'] = 'Bearer ' + adminPass;
-    
-    const res = await fetch(url, options);
-    if (res.status === 401) {
-        document.getElementById('adminLockErrorMsg').classList.remove('hidden');
-        showAdminLock();
-        throw new Error('No autorizado');
-    }
-    return res;
-}
+
 
 // Admin Dashboard Logic for Subscriptions & Auto-Billing
 let allClients = [];
@@ -48,19 +37,15 @@ const PRICING_DEFAULTS = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (adminPass) {
-        document.getElementById('adminLockScreen').style.display = 'none';
-        fetchMetrics();
-        fetchClients();
-    } else {
-        showAdminLock();
-    }
+    document.getElementById('adminLockScreen').style.display = 'none';
+    fetchMetrics();
+    fetchClients();
 });
 
 // 1. Fetch Dashboard Metrics
 async function fetchMetrics() {
     try {
-        const res = await adminFetch('/api/metrics');
+        const res = await fetch('/api/metrics');
         const data = await res.json();
         if (res.ok) {
             document.getElementById('metricRevenue').textContent = data.totalRevenue || '$24,500.00';
@@ -78,7 +63,7 @@ async function fetchClients(query = '') {
     const tbody = document.getElementById('clientsTableBody');
     try {
         const url = query ? `/api/clients?q=${encodeURIComponent(query)}` : '/api/clients';
-        const res = await adminFetch(url);
+        const res = await fetch(url);
         const data = await res.json();
         
         if (res.ok && data.clients) {
@@ -267,7 +252,7 @@ async function handleCreateClient(event) {
     };
 
     try {
-        const res = await adminFetch('/api/clients', {
+        const res = await fetch('/api/clients', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -296,7 +281,7 @@ async function cancelSubscriptionAdmin(clientId, clientName) {
     if (!confirm(`¿Estás seguro de cancelar la suscripción de "${clientName}"? Se detendrán todos los cobros automáticos en Payphone/Stripe.`)) return;
 
     try {
-        const res = await adminFetch('/api/cancel-subscription', {
+        const res = await fetch('/api/cancel-subscription', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -322,7 +307,7 @@ async function cancelSubscriptionAdmin(clientId, clientName) {
 // 8. Retry Payment
 async function retryPayment(clientId, clientName) {
     try {
-        const res = await adminFetch('/api/retry-payment', {
+        const res = await fetch('/api/retry-payment', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ clientId: clientId })
@@ -372,7 +357,7 @@ async function handleUpdateClient(event) {
     };
 
     try {
-        const res = await adminFetch(`/api/clients/${id}`, {
+        const res = await fetch(`/api/clients/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -397,7 +382,7 @@ async function deleteClient(id, name) {
     if (!confirm(`¿Estás seguro de eliminar el registro de "${name}"?`)) return;
 
     try {
-        const res = await adminFetch(`/api/clients/${id}`, { method: 'DELETE' });
+        const res = await fetch(`/api/clients/${id}`, { method: 'DELETE' });
         if (res.ok) {
             fetchClients();
             fetchMetrics();
