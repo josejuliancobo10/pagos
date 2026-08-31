@@ -48,8 +48,13 @@ const PRICING_DEFAULTS = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    fetchMetrics();
-    fetchClients();
+    if (adminPass) {
+        document.getElementById('adminLockScreen').style.display = 'none';
+        fetchMetrics();
+        fetchClients();
+    } else {
+        showAdminLock();
+    }
 });
 
 // 1. Fetch Dashboard Metrics
