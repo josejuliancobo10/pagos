@@ -1,11 +1,11 @@
 
-let adminPass = localStorage.getItem('adminPass') || '';
+let adminPass = '';
 
 function handleAdminLogin(e) {
     e.preventDefault();
     const pass = document.getElementById('adminPasswordInput').value;
     adminPass = pass;
-    localStorage.setItem('adminPass', pass);
+    // No guardamos la contraseña para que siempre la pida
     document.getElementById('adminLockScreen').style.display = 'none';
     
     if (adminPass) {
@@ -21,7 +21,7 @@ function handleAdminLogin(e) {
 function showAdminLock() {
     document.getElementById('adminLockScreen').style.display = 'flex';
     document.getElementById('adminPasswordInput').value = '';
-    localStorage.removeItem('adminPass');
+    
 }
 
 // Intercept fetch wrapper
