@@ -29,7 +29,7 @@ async function adminFetch(url, options = {}) {
     if (!options.headers) options.headers = {};
     options.headers['Authorization'] = 'Bearer ' + adminPass;
     
-    const res = await adminFetch(url, options);
+    const res = await fetch(url, options);
     if (res.status === 401) {
         document.getElementById('adminLockErrorMsg').classList.remove('hidden');
         showAdminLock();
