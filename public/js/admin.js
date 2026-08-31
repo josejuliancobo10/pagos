@@ -1,3 +1,43 @@
+
+let adminPass = localStorage.getItem('adminPass') || '';
+
+function handleAdminLogin(e) {
+    e.preventDefault();
+    const pass = document.getElementById('adminPasswordInput').value;
+    adminPass = pass;
+    localStorage.setItem('adminPass', pass);
+    document.getElementById('adminLockScreen').style.display = 'none';
+    
+    if (adminPass) {
+        document.getElementById('adminLockScreen').style.display = 'none';
+        loadMetrics();
+        loadClients();
+    } else {
+        showAdminLock();
+    }
+
+}
+
+function showAdminLock() {
+    document.getElementById('adminLockScreen').style.display = 'flex';
+    document.getElementById('adminPasswordInput').value = '';
+    localStorage.removeItem('adminPass');
+}
+
+// Intercept fetch wrapper
+async function adminFetch(url, options = {}) {
+    if (!options.headers) options.headers = {};
+    options.headers['x-admin-password'] = adminPass;
+    
+    const res = await adminFetch(url, options);
+    if (res.status === 401) {
+        document.getElementById('adminLockErrorMsg').classList.remove('hidden');
+        showAdminLock();
+        throw new Error('No autorizado');
+    }
+    return res;
+}
+
 // Admin Dashboard Logic for Subscriptions & Auto-Billing
 let allClients = [];
 
@@ -15,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // 1. Fetch Dashboard Metrics
 async function fetchMetrics() {
     try {
-        const res = await fetch('/api/metrics');
+        const res = await adminFetch('/api/metrics');
         const data = await res.json();
         if (res.ok) {
             document.getElementById('metricRevenue').textContent = data.totalRevenue || '$24,500.00';
@@ -33,7 +73,7 @@ async function fetchClients(query = '') {
     const tbody = document.getElementById('clientsTableBody');
     try {
         const url = query ? `/api/clients?q=${encodeURIComponent(query)}` : '/api/clients';
-        const res = await fetch(url);
+        const res = await adminFetch(url);
         const data = await res.json();
         
         if (res.ok && data.clients) {
@@ -222,7 +262,7 @@ async function handleCreateClient(event) {
     };
 
     try {
-        const res = await fetch('/api/clients', {
+        const res = await adminFetch('/api/clients', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -251,7 +291,7 @@ async function cancelSubscriptionAdmin(clientId, clientName) {
     if (!confirm(`¿Estás seguro de cancelar la suscripción de "${clientName}"? Se detendrán todos los cobros automáticos en Payphone/Stripe.`)) return;
 
     try {
-        const res = await fetch('/api/cancel-subscription', {
+        const res = await adminFetch('/api/cancel-subscription', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -277,7 +317,7 @@ async function cancelSubscriptionAdmin(clientId, clientName) {
 // 8. Retry Payment
 async function retryPayment(clientId, clientName) {
     try {
-        const res = await fetch('/api/retry-payment', {
+        const res = await adminFetch('/api/retry-payment', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ clientId: clientId })
@@ -327,7 +367,7 @@ async function handleUpdateClient(event) {
     };
 
     try {
-        const res = await fetch(`/api/clients/${id}`, {
+        const res = await adminFetch(`/api/clients/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -352,7 +392,7 @@ async function deleteClient(id, name) {
     if (!confirm(`¿Estás seguro de eliminar el registro de "${name}"?`)) return;
 
     try {
-        const res = await fetch(`/api/clients/${id}`, { method: 'DELETE' });
+        const res = await adminFetch(`/api/clients/${id}`, { method: 'DELETE' });
         if (res.ok) {
             fetchClients();
             fetchMetrics();

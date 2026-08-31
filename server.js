@@ -105,6 +105,16 @@ const server = http.createServer(async (req, res) => {
   if (pathname.startsWith('/api/')) {
     
     // 1. Verify Access Code
+    
+    // ADMIN AUTHENTICATION
+    const adminRoutes = ['/api/metrics', '/api/clients'];
+    if (adminRoutes.some(r => pathname.startsWith(r))) {
+      const authHeader = req.headers['x-admin-password'];
+      if (authHeader !== 'admin123') {
+        return sendJSON(res, { error: 'No autorizado. Contraseña incorrecta.' }, 401);
+      }
+    }
+
     if (pathname === '/api/verify-code' && req.method === 'POST') {
       try {
         const { code } = await parseBody(req);
