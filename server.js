@@ -94,7 +94,7 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(204, {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-admin-password'
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization'
     });
     return res.end();
   }
@@ -109,7 +109,7 @@ const server = http.createServer(async (req, res) => {
     // ADMIN AUTHENTICATION
     const adminRoutes = ['/api/metrics', '/api/clients'];
     if (adminRoutes.some(r => pathname.startsWith(r))) {
-      const authHeader = req.headers['x-admin-password'];
+      const authHeader = req.headers['authorization'] ? req.headers['authorization'].replace('Bearer ', '') : null;
       if (authHeader !== 'admin123') {
         return sendJSON(res, { error: 'No autorizado. Contraseña incorrecta.' }, 401);
       }

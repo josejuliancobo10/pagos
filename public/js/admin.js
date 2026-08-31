@@ -27,7 +27,7 @@ function showAdminLock() {
 // Intercept fetch wrapper
 async function adminFetch(url, options = {}) {
     if (!options.headers) options.headers = {};
-    options.headers['x-admin-password'] = adminPass;
+    options.headers['Authorization'] = 'Bearer ' + adminPass;
     
     const res = await adminFetch(url, options);
     if (res.status === 401) {
