@@ -251,6 +251,8 @@ async function handleCreateClient(event) {
         }
     }
     const recurringAmount = parseFloat(document.getElementById('ncAmount').value) || 0;
+    let initialAmountRaw = document.getElementById('ncInitialAmount').value;
+    const initialAmount = initialAmountRaw !== '' ? parseFloat(initialAmountRaw) : recurringAmount;
 
     const payload = {
         name: document.getElementById('ncName').value.trim(),
@@ -259,7 +261,7 @@ async function handleCreateClient(event) {
         plan: plan,
         billing_cycle: 'annual',
         recurring_amount: recurringAmount,
-        activation_fee: 0,
+        activation_fee: initialAmount,
         access_code: document.getElementById('ncCode').value.trim().toUpperCase() || undefined
     };
 

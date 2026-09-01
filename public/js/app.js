@@ -239,13 +239,16 @@ function updateSummary() {
     const cycleTitle = 'Ciclo Anual Recurrente';
     const recurringPeriodText = '/año';
 
-    const firstTotal = recurringPrice;
+    let firstTotal = recurringPrice;
+    if (state.client && state.client.planGroup === state.selectedPlan && state.client.activation_fee !== undefined && state.client.activation_fee !== null && state.client.activation_fee !== recurringPrice) {
+        firstTotal = state.client.activation_fee;
+    }
 
     // Update summary texts
     document.getElementById('summaryPlanTitle').textContent = displayName;
     document.getElementById('summaryCycleTitle').textContent = cycleTitle;
-    document.getElementById('summaryPlanAmount').textContent = `${recurringPrice.toFixed(2)}`;
-    document.getElementById('summaryRecurringPlan').textContent = `${recurringPrice.toFixed(2)}`;
+    document.getElementById('summaryPlanAmount').textContent = `${firstTotal.toFixed(2)}`;
+    document.getElementById('summaryRecurringPlan').textContent = `${firstTotal.toFixed(2)}`;
     
     // Hide Activation Fee row if it exists (we removed it from HTML, but just in case)
     const actFeeEl = document.getElementById('summaryActivationFee');

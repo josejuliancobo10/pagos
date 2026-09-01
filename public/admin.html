@@ -307,6 +307,11 @@
                         <input type="number" step="0.01" id="ncAmount" value="269.99" required class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface font-semibold">
                     </div>
                 </div>
+                <div class="mt-4">
+                    <label class="block text-xs font-bold text-on-surface mb-1">Cobro Inicial Hoy ($) - (Para Abonos)</label>
+                    <input type="number" step="0.01" id="ncInitialAmount" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface font-semibold" placeholder="Ej: Deja vacío para cobrar el precio anual completo">
+                    <p class="text-[10px] text-slate-500 mt-1">Si cobras un abono (ej: 40%), ponlo aquí. El sistema cobrará esto hoy, y el próximo año renovará por el Precio Anual completo.</p>
+                </div>
                 <div id="customFeaturesDiv" class="hidden mt-4">
                     <label class="block text-xs font-bold text-on-surface mb-1">Características Personalizadas (Opcional, una por línea)</label>
                     <textarea id="ncCustomFeatures" rows="4" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface" placeholder="Ej: Dominio propio
