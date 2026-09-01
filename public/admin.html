@@ -278,42 +278,22 @@
                 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-on-surface mb-1">Contacto *</label>
-                        <input id="ncContact" required class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface" placeholder="Ej: María Castro" type="text"/>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-on-surface mb-1">Email</label>
-                        <input id="ncEmail" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface" placeholder="mcastro@empresa.ec" type="email"/>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-on-surface mb-1">Plan Oficial</label>
+                        <label class="block text-xs font-bold text-on-surface mb-1">Plan a Facturar</label>
                         <select id="ncPlan" onchange="updateNewClientAmounts()" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface font-semibold">
-                            <option value="Starter">Starter ($19,99/m)</option>
-                            <option value="Business" selected>Business ($29,99/m)</option>
-                            <option value="Pro">Pro ($44,99/m)</option>
+                            <option value="Basic" data-price="99.99">Basic ($99.99/año)</option>
+                            <option value="Starter" data-price="179.99">Starter ($179.99/año)</option>
+                            <option value="Business" data-price="269.99" selected>Business ($269.99/año)</option>
+                            <option value="Pro" data-price="449.99">Pro ($449.99/año)</option>
+                            <option value="Basic Personalizado" data-price="">Basic (Personalizado)</option>
+                            <option value="Starter Personalizado" data-price="">Starter (Personalizado)</option>
+                            <option value="Business Personalizado" data-price="">Business (Personalizado)</option>
+                            <option value="Pro Personalizado" data-price="">Pro (Personalizado)</option>
+                            <option value="Servicio Personalizado" data-price="">Servicio Personalizado</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-on-surface mb-1">Periodicidad</label>
-                        <select id="ncCycle" onchange="updateNewClientAmounts()" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface font-semibold">
-                            <option value="monthly" selected>Mensual</option>
-                            <option value="quarterly">Trimestral (5% dto.)</option>
-                            <option value="annual">Anual (10% dto.)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs flex justify-between">
-                    <div>
-                        <span class="text-slate-500">Cuota Recurrente:</span>
-                        <p id="ncRecurringDisplay" class="font-bold text-primary font-mono">$29.99</p>
-                    </div>
-                    <div>
-                        <span class="text-slate-500">Activación (1 vez):</span>
-                        <p id="ncActivationDisplay" class="font-bold text-on-surface font-mono">$29.99</p>
+                        <label class="block text-xs font-bold text-on-surface mb-1">Precio Anual ($)</label>
+                        <input type="number" step="0.01" id="ncAmount" value="269.99" required class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface font-semibold">
                     </div>
                 </div>
 

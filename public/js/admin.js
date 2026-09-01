@@ -214,15 +214,17 @@ function closeNewClientModal() {
 }
 
 function updateNewClientAmounts() {
-    const plan = document.getElementById('ncPlan').value;
-    const cycle = document.getElementById('ncCycle').value;
-    const pricing = PRICING_DEFAULTS[plan] || PRICING_DEFAULTS['Business'];
-
-    let recurringAmount = pricing.monthly;
-    if (cycle === 'quarterly') recurringAmount = pricing.quarterly;
-    if (cycle === 'annual') recurringAmount = pricing.annual;
-
-    document.getElementById('ncRecurringDisplay').textContent = `$${recurringAmount.toFixed(2)}`;
+    const planSelect = document.getElementById('ncPlan');
+    const selectedOption = planSelect.options[planSelect.selectedIndex];
+    const price = selectedOption.getAttribute('data-price');
+    
+    if (price) {
+        document.getElementById('ncAmount').value = price;
+    } else {
+        document.getElementById('ncAmount').value = '';
+        document.getElementById('ncAmount').focus();
+    }
+}`;
     document.getElementById('ncActivationDisplay').textContent = `$${pricing.activation.toFixed(2)}`;
 }
 
@@ -233,21 +235,16 @@ async function handleCreateClient(event) {
     btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">progress_activity</span> Creando...';
 
     const plan = document.getElementById('ncPlan').value;
-    const cycle = document.getElementById('ncCycle').value;
-    const pricing = PRICING_DEFAULTS[plan] || PRICING_DEFAULTS['Business'];
-
-    let recurringAmount = pricing.monthly;
-    if (cycle === 'quarterly') recurringAmount = pricing.quarterly;
-    if (cycle === 'annual') recurringAmount = pricing.annual;
+    const recurringAmount = parseFloat(document.getElementById('ncAmount').value) || 0;
 
     const payload = {
         name: document.getElementById('ncName').value.trim(),
         contact_name: document.getElementById('ncContact').value.trim(),
         email: document.getElementById('ncEmail').value.trim(),
         plan: plan,
-        billing_cycle: cycle,
+        billing_cycle: 'annual',
         recurring_amount: recurringAmount,
-        activation_fee: pricing.activation,
+        activation_fee: 0,
         access_code: document.getElementById('ncCode').value.trim().toUpperCase() || undefined
     };
 
