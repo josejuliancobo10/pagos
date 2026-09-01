@@ -224,8 +224,6 @@ function updateNewClientAmounts() {
         document.getElementById('ncAmount').value = '';
         document.getElementById('ncAmount').focus();
     }
-}`;
-    document.getElementById('ncActivationDisplay').textContent = `$${pricing.activation.toFixed(2)}`;
 }
 
 async function handleCreateClient(event) {
