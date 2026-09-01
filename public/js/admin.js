@@ -217,12 +217,22 @@ function updateNewClientAmounts() {
     const planSelect = document.getElementById('ncPlan');
     const selectedOption = planSelect.options[planSelect.selectedIndex];
     const price = selectedOption.getAttribute('data-price');
+    const planName = planSelect.value;
     
     if (price) {
         document.getElementById('ncAmount').value = price;
     } else {
         document.getElementById('ncAmount').value = '';
         document.getElementById('ncAmount').focus();
+    }
+
+    const customFeaturesDiv = document.getElementById('customFeaturesDiv');
+    if (customFeaturesDiv) {
+        if (planName.includes('Personalizado')) {
+            customFeaturesDiv.classList.remove('hidden');
+        } else {
+            customFeaturesDiv.classList.add('hidden');
+        }
     }
 }
 
@@ -232,7 +242,14 @@ async function handleCreateClient(event) {
     btn.disabled = true;
     btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">progress_activity</span> Creando...';
 
-    const plan = document.getElementById('ncPlan').value;
+    let plan = document.getElementById('ncPlan').value;
+    const customFeaturesInput = document.getElementById('ncCustomFeatures');
+    if (plan.includes('Personalizado') && customFeaturesInput && customFeaturesInput.value.trim() !== '') {
+        const featureList = customFeaturesInput.value.trim().split('\n').map(f => f.trim()).filter(f => f).join('|');
+        if (featureList) {
+            plan = plan + '||' + featureList;
+        }
+    }
     const recurringAmount = parseFloat(document.getElementById('ncAmount').value) || 0;
 
     const payload = {
