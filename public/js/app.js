@@ -82,9 +82,51 @@ async function verifyAccessCode(code) {
             state.client = data.client;
             
             if (data.client.plan) {
-                if (data.client.plan.toLowerCase().includes('basic')) state.selectedPlan = 'Basic'; else if (data.client.plan.toLowerCase().includes('starter')) state.selectedPlan = 'Starter';
-                else if (data.client.plan.toLowerCase().includes('pro')) state.selectedPlan = 'Pro';
-                else state.selectedPlan = 'Business';
+                let rawPlan = data.client.plan;
+                if (rawPlan.includes('||')) {
+                    const parts = rawPlan.split('||');
+                    data.client.planNameClean = parts[0];
+                    data.client.customFeatures = parts[1].split('|');
+                } else {
+                    data.client.planNameClean = rawPlan;
+                    data.client.customFeatures = null;
+                }
+
+                const pName = data.client.planNameClean.toLowerCase();
+                if (pName.includes('basic')) data.client.planGroup = 'Basic';
+                else if (pName.includes('starter')) data.client.planGroup = 'Starter';
+                else if (pName.includes('pro')) data.client.planGroup = 'Pro';
+                else data.client.planGroup = 'Business';
+
+                state.selectedPlan = data.client.planGroup;
+                
+                // Actualizar la tarjeta del cliente
+                const card = document.getElementById('card' + data.client.planGroup);
+                if (card) {
+                    // Actualizar nombre
+                    const titleEl = card.querySelector('h3');
+                    if (titleEl) titleEl.textContent = data.client.planNameClean.toUpperCase();
+                    
+                    // Actualizar precio en la tarjeta SIEMPRE
+                    const priceEl = card.querySelector('.text-4xl');
+                    if (priceEl && data.client.recurring_amount !== undefined) {
+                        priceEl.textContent = '$' + parseFloat(data.client.recurring_amount).toFixed(2);
+                    }
+
+                    // Actualizar características si existen
+                    if (data.client.customFeatures) {
+                        const ul = card.querySelector('ul');
+                        if (ul) {
+                            ul.innerHTML = '';
+                            data.client.customFeatures.forEach(feat => {
+                                ul.innerHTML += `<li class="flex items-start gap-2 text-xs text-slate-600 mb-2">
+                                    <span class="material-symbols-outlined text-[16px] text-primary shrink-0">check_circle</span>
+                                    <span>${feat}</span>
+                                </li>`;
+                            });
+                        }
+                    }
+                }
             }
 
             if (data.client.billing_cycle) {
@@ -124,114 +166,6 @@ async function verifyAccessCode(code) {
     }
 }
 
-// 2. Removed
-
-// 3. Update Pricing cards based on cycle
-function updatePricingDisplay() {
-    // Only Annual
-}
-
-// 4. Select a Plan
-function selectPlan(planName) {
-    state.selectedPlan = planName;
-
-    
-    const cards = {
-        'Basic': document.getElementById('cardBasic'),
-        'Starter': document.getElementById('cardStarter'),
-        'Business': document.getElementById('cardBusiness'),
-        'Pro': document.getElementById('cardPro')
-    };
-
-    const buttons = {
-        'Basic': document.getElementById('btnSelectBasic'),
-        'Starter': document.getElementById('btnSelectStarter'),
-        'Business': document.getElementById('btnSelectBusiness'),
-        'Pro': document.getElementById('btnSelectPro')
-    };
-
-    // Reset styles
-    Object.keys(cards).forEach(key => {
-        const c = cards[key];
-        const b = buttons[key];
-        if (!c || !b) return;
-
-        c.classList.remove('ring-4', 'ring-purple-200', 'ring-blue-200', 'ring-emerald-200', 'ring-green-200', 'border-primary', 'lg:-translate-y-2', 'shadow-2xl');
-        c.classList.add('border-outline-variant');
-        b.textContent = `Elegir plan ${key}`;
-    });
-
-    // Highlight selected
-    const activeCard = cards[planName];
-    const activeBtn = buttons[planName];
-    if (activeCard && activeBtn) {
-        activeCard.classList.remove('border-outline-variant');
-        activeCard.classList.add('shadow-2xl', 'lg:-translate-y-2');
-        
-        if (planName === 'Business') {
-            activeCard.classList.add('ring-4', 'ring-purple-200', 'border-[#4e03b8]');
-            activeBtn.innerHTML = '<span class="material-symbols-outlined text-sm">verified</span> Plan Seleccionado';
-        } else if (planName === 'Starter') {
-            activeCard.classList.add('ring-4', 'ring-blue-200', 'border-[#0058be]');
-            activeBtn.textContent = 'Plan Seleccionado';
-        } else if (planName === 'Pro') {
-            activeCard.classList.add('ring-4', 'ring-emerald-200', 'border-[#15803d]');
-            activeBtn.textContent = 'Plan Seleccionado';
-        } else if (planName === 'Basic') {
-            activeCard.classList.add('ring-4', 'ring-green-200', 'border-[#166534]');
-            activeBtn.textContent = 'Plan Seleccionado';
-        }
-    }
-
-    updateSummary();
-}
-
-// 5. Update Order Summary
-function updateSummary() {
-    const p = PRICING[state.selectedPlan];
-    const recurringPrice = p.annual;
-    const cycleTitle = 'Ciclo Anual Recurrente';
-    const recurringPeriodText = '/año';
-
-    const firstTotal = recurringPrice;
-
-    // Update summary texts
-    document.getElementById('summaryPlanTitle').textContent = `Plan ${state.selectedPlan}`;
-    document.getElementById('summaryCycleTitle').textContent = cycleTitle;
-    document.getElementById('summaryPlanAmount').textContent = `${recurringPrice.toFixed(2)}`;
-    document.getElementById('summaryRecurringPlan').textContent = `${recurringPrice.toFixed(2)}`;
-    
-    // Hide Activation Fee row if it exists (we removed it from HTML, but just in case)
-    const actFeeEl = document.getElementById('summaryActivationFee');
-    if (actFeeEl) actFeeEl.parentElement.style.display = 'none';
-    
-    document.getElementById('summaryFirstPayment').textContent = `${firstTotal.toFixed(2)}`;
-    document.getElementById('summaryNextCycles').textContent = `${recurringPrice.toFixed(2)}${recurringPeriodText}`;
-
-    // Submit button label
-    const btnSubmitText = document.getElementById('btnSubmitText');
-    if (btnSubmitText) {
-        btnSubmitText.textContent = `Autorizar Suscripción por ${firstTotal.toFixed(2)}`;
-    }
-
-    state.calculated = {
-        recurringPrice,
-        activationFee: 0,
-        firstTotal
-    };
-}
-
-// 6. Payment Gateway Switcher
-function setPaymentMethod(method) {
-    state.paymentMethod = method;
-    if (method === 'payphone') {
-        document.getElementById('payRadioPayphone').checked = true;
-    } else {
-        document.getElementById('payRadioCard').checked = true;
-    }
-}
-
-// 7. Submit Subscription & First Payment
 async function handlePaymentSubmit(event) {
     event.preventDefault();
     const btn = document.getElementById('btnSubmitPayment');
