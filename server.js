@@ -176,7 +176,7 @@ const server = http.createServer(async (req, res) => {
             plan: data.plan,
             billing_cycle: data.billing_cycle || 'annual',
             recurring_amount: parseFloat(data.recurring_amount || 0),
-            activation_fee: 0,
+            activation_fee: data.activation_fee !== undefined ? parseFloat(data.activation_fee) : 0,
             status: data.status || 'Pendiente',
             access_code: accessCode,
             next_billing_date: getNextBillingDate(data.billing_cycle || 'annual'),
