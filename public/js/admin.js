@@ -19,10 +19,10 @@ function handleAdminLogin(e) {
     const pass = document.getElementById('adminPasswordInput').value;
     adminPass = pass;
     // No guardamos la contraseña para que siempre la pida
-    document.getElementById('adminLockScreen').style.display = 'none';
+    const lock = document.getElementById('adminLockScreen'); if(lock) lock.style.display = 'none';
     
     if (adminPass) {
-        document.getElementById('adminLockScreen').style.display = 'none';
+        const lock = document.getElementById('adminLockScreen'); if(lock) lock.style.display = 'none';
         loadMetrics();
         loadClients();
     } else {
@@ -50,7 +50,7 @@ const PRICING_DEFAULTS = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('adminLockScreen').style.display = 'none';
+    const lock = document.getElementById('adminLockScreen'); if(lock) lock.style.display = 'none';
     fetchMetrics();
     fetchClients();
 });
