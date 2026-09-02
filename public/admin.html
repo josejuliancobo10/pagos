@@ -275,8 +275,24 @@
                     </button>
                 </div>
                 
-                <div class="bg-white rounded-3xl shadow-sm border border-outline-variant p-6">
-                    <div id="calendarEl"></div>
+                <div class="flex flex-col lg:flex-row gap-6">
+                    <!-- Client List Sidebar -->
+                    <div class="w-full lg:w-64 shrink-0 bg-white rounded-3xl shadow-sm border border-outline-variant p-5 flex flex-col h-[700px]">
+                        <h3 class="font-black text-on-surface text-lg tracking-tight mb-4">Mis Clientes</h3>
+                        <div class="relative mb-4">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
+                            <input type="text" id="calClientSearch" onkeyup="searchCalendarClients(this.value)" placeholder="Buscar..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+                        </div>
+                        <div id="calendarClientList" class="flex-1 overflow-y-auto space-y-1.5 pr-1 custom-scrollbar">
+                            <button onclick="filterCalendar('all')" id="btnCalClient-all" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold transition-all bg-primary text-white shadow-sm">Todos los Clientes</button>
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+                    
+                    <!-- Calendar Grid -->
+                    <div class="flex-1 bg-white rounded-3xl shadow-sm border border-outline-variant p-6 h-[700px] overflow-hidden">
+                        <div id="calendarEl" class="h-full"></div>
+                    </div>
                 </div>
             </section>
 

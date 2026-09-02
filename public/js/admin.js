@@ -3,6 +3,7 @@ window.switchTab = function(tabId) {
     if (tabId === 'calendar') {
         document.getElementById('viewDashboard').classList.add('hidden');
         document.getElementById('viewCalendar').classList.remove('hidden');
+        renderCalendarClientList();
         setTimeout(() => { if(typeof initCalendar === 'function') initCalendar(); }, 100);
     } else {
         document.getElementById('viewDashboard').classList.remove('hidden');
@@ -490,7 +491,11 @@ function initCalendar() {
                             }
                         };
                     });
-                    successCallback(formatted);
+                    
+                    const filtered = activeCalendarClient === 'all' 
+                        ? formatted 
+                        : formatted.filter(e => e.extendedProps.client_id && e.extendedProps.client_id.toString() === activeCalendarClient);
+                    successCallback(filtered);
                 } else {
                     successCallback([]);
                 }
@@ -591,3 +596,53 @@ document.addEventListener('DOMContentLoaded', () => {
     const f = document.getElementById('eventForm');
     if(f) f.addEventListener('submit', saveEvent);
 });
+
+
+let activeCalendarClient = 'all';
+
+function renderCalendarClientList() {
+    const list = document.getElementById('calendarClientList');
+    if (!list) return;
+    
+    // Keep the "All" button
+    let html = `<button onclick="filterCalendar('all')" id="btnCalClient-all" class="w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${activeCalendarClient === 'all' ? 'bg-primary text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'}">Todos los Clientes</button>`;
+    
+    // Sort clients alphabetically
+    const sorted = [...window.allClients].sort((a,b) => (a.name || '').localeCompare(b.name || ''));
+    
+    sorted.forEach(c => {
+        const isActive = activeCalendarClient === c.id.toString();
+        const classes = isActive ? 'bg-primary text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100';
+        html += `<button onclick="filterCalendar('${c.id}')" id="btnCalClient-${c.id}" class="cal-client-item w-full text-left px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${classes}" data-name="${(c.name||'').toLowerCase()}">${c.name}</button>`;
+    });
+    
+    list.innerHTML = html;
+}
+
+function filterCalendar(clientId) {
+    activeCalendarClient = clientId.toString();
+    renderCalendarClientList();
+    if (calendar) calendar.refetchEvents();
+    
+    // Auto-select client in modal if a specific client is selected
+    const evClientSelect = document.getElementById('evClient');
+    if (evClientSelect) {
+        if (activeCalendarClient !== 'all') {
+            evClientSelect.value = activeCalendarClient;
+        } else {
+            evClientSelect.value = "";
+        }
+    }
+}
+
+function searchCalendarClients(query) {
+    query = query.toLowerCase();
+    const items = document.querySelectorAll('.cal-client-item');
+    items.forEach(item => {
+        if (item.getAttribute('data-name').includes(query)) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
