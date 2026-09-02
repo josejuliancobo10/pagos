@@ -1,4 +1,16 @@
 
+window.switchTab = function(tabId) {
+    if (tabId === 'calendar') {
+        document.getElementById('viewDashboard').classList.add('hidden');
+        document.getElementById('viewCalendar').classList.remove('hidden');
+        setTimeout(() => { if(typeof initCalendar === 'function') initCalendar(); }, 100);
+    } else {
+        document.getElementById('viewDashboard').classList.remove('hidden');
+        document.getElementById('viewCalendar').classList.add('hidden');
+    }
+};
+
+
 let adminPass = '';
 
 function handleAdminLogin(e) {

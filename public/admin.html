@@ -118,13 +118,17 @@
         </div>
 
         <nav class="flex-1 px-4 space-y-1.5 text-xs font-bold">
-            <a class="bg-primary text-white rounded-2xl px-4 py-3 flex items-center gap-3 shadow-sm" href="/admin">
+            <a class="bg-primary text-white rounded-2xl px-4 py-3 flex items-center gap-3 shadow-sm" href="#" onclick="switchTab('dashboard'); return false;">
                 <span class="material-symbols-outlined text-[20px]" data-weight="fill">dashboard</span>
                 Dashboard & Métricas
             </a>
             <a class="text-on-surface-variant hover:bg-slate-100 hover:text-primary rounded-2xl px-4 py-3 flex items-center gap-3 transition-colors" href="#clientesSection">
                 <span class="material-symbols-outlined text-[20px]">group</span>
                 Suscripciones Activas
+            </a>
+            <a class="text-on-surface-variant hover:bg-slate-100 hover:text-primary rounded-2xl px-4 py-3 flex items-center gap-3 transition-colors" href="#" onclick="switchTab('calendar'); return false;">
+                <span class="material-symbols-outlined text-[20px]">calendar_month</span>
+                Calendario (Gastos)
             </a>
             <a class="text-on-surface-variant hover:bg-slate-100 hover:text-primary rounded-2xl px-4 py-3 flex items-center gap-3 transition-colors" href="/" target="_blank">
                 <span class="material-symbols-outlined text-[20px]">open_in_new</span>
@@ -148,6 +152,7 @@
     <!-- Main Content Canvas -->
     <main class="flex-1 md:ml-[280px] min-h-screen pb-24">
         <div class="max-w-[1440px] mx-auto p-4 md:p-10 space-y-8">
+            <div id="viewDashboard" class="space-y-8">
             
             <!-- Dashboard Header -->
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-outline-variant pb-6">
@@ -255,6 +260,26 @@
                     </table>
                 </div>
             </section>
+            </div>
+
+            <!-- CALENDAR SECTION -->
+            <section id="viewCalendar" class="hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-3xl md:text-4xl font-black text-on-surface tracking-tight">Calendario de Tareas</h2>
+                        <p class="text-xs md:text-sm text-on-surface-variant mt-1">Controla las renovaciones y gastos por cliente.</p>
+                    </div>
+                    <button onclick="openEventModal()" class="bg-primary hover:bg-[#3d0291] text-white px-5 py-2.5 rounded-xl font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2 text-sm">
+                        <span class="material-symbols-outlined text-[20px]">add</span>
+                        Nuevo Evento
+                    </button>
+                </div>
+                
+                <div class="bg-white rounded-3xl shadow-sm border border-outline-variant p-6">
+                    <div id="calendarEl"></div>
+                </div>
+            </section>
+
         </div>
     </main>
 
@@ -409,5 +434,53 @@ Soporte prioritario"></textarea>
 
     <!-- Admin JS -->
     <script src="/js/admin.js"></script>
+
+    <!-- EVENT MODAL -->
+    <div id="eventModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 blur-backdrop p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 md:p-8 shadow-2xl border border-outline-variant relative">
+            <button onclick="closeEventModal()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600 transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <h3 id="eventModalTitle" class="text-xl font-black text-on-surface mb-2 tracking-tight">Añadir Tarea/Gasto</h3>
+            <p class="text-xs text-on-surface-variant mb-6">Registra un pago pendiente o recordatorio.</p>
+            
+            <form id="eventForm" class="space-y-4">
+                <input type="hidden" id="evId">
+                
+                <div>
+                    <label class="block text-xs font-bold text-on-surface mb-1">Cliente Vinculado</label>
+                    <select id="evClient" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface font-semibold text-slate-700">
+                        <option value="">-- Sin Cliente Específico --</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface mb-1">Fecha límite / Fecha de cobro</label>
+                    <input type="date" id="evDate" required class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface font-semibold text-slate-700">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-on-surface mb-1">Descripción / Notas</label>
+                    <input type="text" id="evNotes" required placeholder="Ej: Renovar dominio .com (Hostinger)" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface font-semibold text-slate-700">
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-bold text-on-surface mb-1">Estado</label>
+                    <select id="evStatus" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface font-semibold text-slate-700">
+                        <option value="Pendiente">Pendiente (Rojo)</option>
+                        <option value="Pagado">Pagado / Listo (Verde)</option>
+                    </select>
+                </div>
+
+                <div class="pt-4 flex gap-3">
+                    <button type="button" id="btnDeleteEvent" onclick="deleteEvent()" class="hidden px-4 py-2.5 rounded-xl border border-red-200 text-red-600 hover:bg-red-50 font-bold transition-colors text-sm">
+                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                    </button>
+                    <button type="button" onclick="closeEventModal()" class="flex-1 px-4 py-2.5 rounded-xl border border-outline-variant text-slate-600 hover:bg-slate-50 font-bold transition-colors text-sm">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-primary hover:bg-[#3d0291] text-white px-4 py-2.5 rounded-xl font-bold shadow-md transition-all text-sm">Guardar Evento</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
