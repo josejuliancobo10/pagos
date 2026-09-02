@@ -28,7 +28,7 @@ function showAdminLock() {
 
 
 // Admin Dashboard Logic for Subscriptions & Auto-Billing
-let allClients = [];
+window.allClients = [];
 
 const PRICING_DEFAULTS = {
     Starter: { activation: 19.99, monthly: 19.99, quarterly: 54.99, annual: 209.99 },
@@ -430,3 +430,152 @@ function escapeHtml(str) {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
 }
+
+
+
+// --- CALENDAR LOGIC ---
+let calendar = null;
+let currentEvents = [];
+
+function initCalendar() {
+    if (calendar) return; // Ya inicializado
+    const calendarEl = document.getElementById('calendarEl');
+    if (!calendarEl) return;
+    
+    calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'es',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,listMonth'
+        },
+        buttonText: {
+            today: 'Hoy',
+            month: 'Mes',
+            list: 'Agenda'
+        },
+        events: async function(info, successCallback, failureCallback) {
+            try {
+                const res = await adminFetch('/api/calendar');
+                const data = await res.json();
+                if(data.events) {
+                    currentEvents = data.events;
+                    const formatted = data.events.map(ev => {
+                        const isPaid = ev.status === 'Pagado';
+                        return {
+                            id: ev.id,
+                            title: (ev.client_name ? `[${ev.client_name}] ` : '') + ev.notes,
+                            start: ev.event_date,
+                            backgroundColor: isPaid ? '#10b981' : '#ef4444', // Verde o Rojo
+                            borderColor: isPaid ? '#059669' : '#b91c1c',
+                            textColor: '#ffffff',
+                            extendedProps: {
+                                client_id: ev.client_id,
+                                client_name: ev.client_name,
+                                status: ev.status,
+                                notes: ev.notes
+                            }
+                        };
+                    });
+                    successCallback(formatted);
+                } else {
+                    successCallback([]);
+                }
+            } catch (err) {
+                console.error('Calendar error', err);
+                failureCallback(err);
+            }
+        },
+        eventClick: function(info) {
+            openEventModal(info.event);
+        }
+    });
+    calendar.render();
+}
+
+function openEventModal(calEvent = null) {
+    document.getElementById('eventModal').classList.remove('hidden');
+    document.getElementById('eventModal').classList.add('flex');
+    
+    // Poblar clientes en el select
+    const select = document.getElementById('evClient');
+    select.innerHTML = '<option value="">-- Sin Cliente Específico --</option>';
+    allClients.forEach(c => {
+        select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+    });
+
+    if (calEvent) {
+        document.getElementById('eventModalTitle').textContent = 'Editar Tarea/Gasto';
+        document.getElementById('evId').value = calEvent.id;
+        document.getElementById('evDate').value = calEvent.startStr;
+        document.getElementById('evNotes').value = calEvent.extendedProps.notes;
+        document.getElementById('evStatus').value = calEvent.extendedProps.status;
+        document.getElementById('evClient').value = calEvent.extendedProps.client_id || '';
+        document.getElementById('btnDeleteEvent').classList.remove('hidden');
+    } else {
+        document.getElementById('eventModalTitle').textContent = 'Añadir Tarea/Gasto';
+        document.getElementById('eventForm').reset();
+        document.getElementById('evId').value = '';
+        document.getElementById('btnDeleteEvent').classList.add('hidden');
+    }
+}
+
+function closeEventModal() {
+    document.getElementById('eventModal').classList.add('hidden');
+    document.getElementById('eventModal').classList.remove('flex');
+}
+
+async function saveEvent(e) {
+    e.preventDefault();
+    const id = document.getElementById('evId').value;
+    const client_id = document.getElementById('evClient').value;
+    const select = document.getElementById('evClient');
+    const client_name = client_id ? select.options[select.selectedIndex].text : '';
+    
+    const payload = {
+        client_id: client_id ? parseInt(client_id) : null,
+        client_name: client_name,
+        event_date: document.getElementById('evDate').value,
+        notes: document.getElementById('evNotes').value,
+        status: document.getElementById('evStatus').value
+    };
+    
+    try {
+        if (id) {
+            await adminFetch(`/api/calendar/${id}`, {
+                method: 'PATCH',
+                body: JSON.stringify(payload)
+            });
+        } else {
+            await adminFetch('/api/calendar', {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+        }
+        closeEventModal();
+        if(calendar) calendar.refetchEvents();
+    } catch(err) {
+        alert('Error al guardar el evento');
+    }
+}
+
+async function deleteEvent() {
+    if(!confirm('¿Estás seguro de eliminar este evento?')) return;
+    const id = document.getElementById('evId').value;
+    if(!id) return;
+    
+    try {
+        await adminFetch(`/api/calendar/${id}`, { method: 'DELETE' });
+        closeEventModal();
+        if(calendar) calendar.refetchEvents();
+    } catch(err) {
+        alert('Error al eliminar');
+    }
+}
+
+// Hook up event form
+document.addEventListener('DOMContentLoaded', () => {
+    const f = document.getElementById('eventForm');
+    if(f) f.addEventListener('submit', saveEvent);
+});

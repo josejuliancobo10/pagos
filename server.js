@@ -148,6 +148,58 @@ const server = http.createServer(async (req, res) => {
       }
     }
 
+    
+    // --- CALENDAR API ---
+    if (pathname === '/api/calendar') {
+      if (req.method === 'GET') {
+        try {
+          const events = await supabaseQuery('calendar_events?order=event_date.asc');
+          return sendJSON(res, { events });
+        } catch (e) {
+          return sendJSON(res, { error: e.message }, 500);
+        }
+      }
+      if (req.method === 'POST') {
+        try {
+          const data = await parseBody(req);
+          const newEvent = await supabaseQuery('calendar_events', 'POST', {
+            client_id: data.client_id || null,
+            client_name: data.client_name || '',
+            event_date: data.event_date,
+            notes: data.notes,
+            status: data.status || 'Pendiente'
+          });
+          return sendJSON(res, { success: true, event: newEvent[0] }, 201);
+        } catch (e) {
+          return sendJSON(res, { error: e.message }, 500);
+        }
+      }
+    }
+    if (pathname.startsWith('/api/calendar/') && req.method === 'PATCH') {
+      try {
+        const id = pathname.split('/')[3];
+        const data = await parseBody(req);
+        const updated = await supabaseQuery(`calendar_events?id=eq.${id}`, 'PATCH', {
+          status: data.status,
+          notes: data.notes,
+          event_date: data.event_date
+        });
+        return sendJSON(res, { success: true, event: updated[0] });
+      } catch (e) {
+        return sendJSON(res, { error: e.message }, 500);
+      }
+    }
+    if (pathname.startsWith('/api/calendar/') && req.method === 'DELETE') {
+      try {
+        const id = pathname.split('/')[3];
+        await supabaseQuery(`calendar_events?id=eq.${id}`, 'DELETE');
+        return sendJSON(res, { success: true });
+      } catch (e) {
+        return sendJSON(res, { error: e.message }, 500);
+      }
+    }
+    // --- END CALENDAR API ---
+
     // 3. Client CRUD
     if (pathname === '/api/clients') {
       if (req.method === 'GET') {
