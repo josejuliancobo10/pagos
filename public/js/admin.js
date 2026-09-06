@@ -225,6 +225,7 @@ function openNewClientModal() {
 function closeNewClientModal() {
     document.getElementById('newClientModal').classList.add('hidden');
     document.getElementById('newClientForm').reset();
+    const pt = document.getElementById('ncProjectTotal'); if (pt) pt.value = '';
 }
 
 function updateNewClientAmounts() {
@@ -653,3 +654,14 @@ function searchCalendarClients(query) {
         }
     });
 }
+
+
+window.calcInitial = function(multiplier) {
+    const total = parseFloat(document.getElementById('ncProjectTotal').value);
+    if (!isNaN(total) && total > 0) {
+        document.getElementById('ncInitialAmount').value = (total * multiplier).toFixed(2);
+    } else {
+        alert('Por favor, ingresa el Costo Total del Proyecto primero.');
+        document.getElementById('ncProjectTotal').focus();
+    }
+};
