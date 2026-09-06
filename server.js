@@ -232,7 +232,7 @@ const server = http.createServer(async (req, res) => {
             status: data.status || 'Pendiente',
             access_code: accessCode,
             next_billing_date: getNextBillingDate(data.billing_cycle || 'annual'),
-            auto_renew: true,
+            auto_renew: data.auto_renew !== undefined ? data.auto_renew : true,
             gateway: 'Payphone'
           });
           
@@ -302,7 +302,6 @@ const server = http.createServer(async (req, res) => {
             status: 'Activo',
             last_payment: formattedToday,
             next_billing_date: nextBilling,
-            auto_renew: true,
             gateway: gatewayName,
             retry_count: 0
           });

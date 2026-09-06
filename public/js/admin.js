@@ -283,7 +283,8 @@ async function handleCreateClient(event) {
         billing_cycle: 'annual',
         recurring_amount: recurringAmount,
         activation_fee: initialAmount,
-        access_code: document.getElementById('ncCode').value.trim().toUpperCase() || undefined
+        access_code: document.getElementById('ncCode').value.trim().toUpperCase() || undefined,
+        auto_renew: document.getElementById('ncAutoRenew') ? document.getElementById('ncAutoRenew').checked : true
     };
 
     try {
