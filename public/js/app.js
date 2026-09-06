@@ -1,17 +1,9 @@
 // Exact Official Pricing Configuration (No hidden fees, no added IVA)
 const PRICING = {
-    Basic: {
-        annual: 99.99
-    },
-    Starter: {
-        annual: 179.99
-    },
-    Business: {
-        annual: 269.99
-    },
-    Pro: {
-        annual: 449.99
-    }
+    Basic: { initial: 99.99, annual: 49.99 },
+    Starter: { initial: 179.99, annual: 99.99 },
+    Business: { initial: 269.99, annual: 129.99 },
+    Pro: { initial: 449.99, annual: 159.99 }
 };
 
 // Global App State

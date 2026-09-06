@@ -333,10 +333,10 @@
                     <div>
                         <label class="block text-xs font-bold text-on-surface mb-1">Plan a Facturar</label>
                         <select id="ncPlan" onchange="updateNewClientAmounts()" class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface font-semibold">
-                            <option value="Basic" data-price="99.99">Basic ($99.99/año)</option>
-                            <option value="Starter" data-price="179.99">Starter ($179.99/año)</option>
-                            <option value="Business" data-price="269.99" selected>Business ($269.99/año)</option>
-                            <option value="Pro" data-price="449.99">Pro ($449.99/año)</option>
+                            <option value="Basic" data-price="49.99" data-initial="99.99">Basic (Renueva a $49.99)</option>
+                            <option value="Starter" data-price="99.99" data-initial="179.99">Starter (Renueva a $99.99)</option>
+                            <option value="Business" data-price="129.99" data-initial="269.99" selected>Business (Renueva a $129.99)</option>
+                            <option value="Pro" data-price="159.99" data-initial="449.99">Pro (Renueva a $159.99)</option>
                             <option value="Basic Personalizado" data-price="">Basic (Personalizado)</option>
                             <option value="Starter Personalizado" data-price="">Starter (Personalizado)</option>
                             <option value="Business Personalizado" data-price="">Business (Personalizado)</option>
@@ -346,7 +346,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-on-surface mb-1">Precio Anual ($)</label>
-                        <input type="number" step="0.01" id="ncAmount" value="269.99" required class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface font-semibold">
+                        <input type="number" step="0.01" id="ncAmount" value="129.99" required class="w-full px-4 py-2.5 rounded-xl border border-outline-variant focus:border-primary text-xs bg-surface font-semibold">
                     </div>
                 </div>
                 <div class="mt-4">

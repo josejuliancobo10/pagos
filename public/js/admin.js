@@ -44,9 +44,10 @@ function showAdminLock() {
 window.allClients = [];
 
 const PRICING_DEFAULTS = {
-    Starter: { activation: 19.99, monthly: 19.99, quarterly: 54.99, annual: 209.99 },
-    Business: { activation: 29.99, monthly: 29.99, quarterly: 82.99, annual: 314.99 },
-    Pro: { activation: 39.99, monthly: 44.99, quarterly: 124.99, annual: 469.99 }
+    Basic: { activation: 99.99, annual: 49.99 },
+    Starter: { activation: 179.99, annual: 99.99 },
+    Business: { activation: 269.99, annual: 129.99 },
+    Pro: { activation: 449.99, annual: 159.99 }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -230,13 +231,19 @@ function updateNewClientAmounts() {
     const planSelect = document.getElementById('ncPlan');
     const selectedOption = planSelect.options[planSelect.selectedIndex];
     const price = selectedOption.getAttribute('data-price');
+    const initial = selectedOption.getAttribute('data-initial');
     const planName = planSelect.value;
     
     if (price) {
         document.getElementById('ncAmount').value = price;
     } else {
         document.getElementById('ncAmount').value = '';
-        document.getElementById('ncAmount').focus();
+    }
+
+    if (initial) {
+        document.getElementById('ncInitialAmount').value = initial;
+    } else {
+        document.getElementById('ncInitialAmount').value = '';
     }
 
     const customFeaturesDiv = document.getElementById('customFeaturesDiv');
