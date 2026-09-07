@@ -54,8 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const lock = document.getElementById('adminLockScreen'); if(lock) lock.style.display = 'none';
     fetchMetrics();
     fetchClients();
-    
-
 });
 
 // 1. Fetch Dashboard Metrics
@@ -163,23 +161,23 @@ function renderClientsTable(clients) {
                 </td>
                 <td class="py-4 px-6">${statusBadge}</td>
                 <td class="py-4 px-6 text-right space-x-1 whitespace-nowrap">
-                    <button data-action="copy" data-code="${client.access_code}" data-name="${escapeHtml(client.name)}" class="p-2 text-slate-400 hover:text-primary hover:bg-slate-100 rounded-xl transition-colors inline-flex items-center" title="Copiar Enlace de Suscripción">
+                    <button onclick="copyClientLink('${client.access_code}', '${escapeHtml(client.name)}')" class="p-2 text-slate-400 hover:text-primary hover:bg-slate-100 rounded-xl transition-colors inline-flex items-center" title="Copiar Enlace de Suscripción">
                         <span class="material-symbols-outlined text-[18px]">link</span>
                     </button>
                     ${statusLower.includes('fallo') ? `
-                        <button data-action="retry" data-id="${client.id}" data-name="${escapeHtml(client.name)}" class="p-2 text-amber-600 hover:text-amber-800 hover:bg-amber-50 rounded-xl transition-colors inline-flex items-center" title="Reintentar Cobro">
+                        <button onclick="retryPayment(${client.id}, '${escapeHtml(client.name)}')" class="p-2 text-amber-600 hover:text-amber-800 hover:bg-amber-50 rounded-xl transition-colors inline-flex items-center" title="Reintentar Cobro">
                             <span class="material-symbols-outlined text-[18px]">replay</span>
                         </button>
                     ` : ''}
                     ${statusLower === 'activo' ? `
-                        <button data-action="cancel" data-id="${client.id}" data-name="${escapeHtml(client.name)}" class="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition-colors inline-flex items-center" title="Cancelar Suscripción (Detener cobros)">
+                        <button onclick="cancelSubscriptionAdmin(${client.id}, '${escapeHtml(client.name)}')" class="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition-colors inline-flex items-center" title="Cancelar Suscripción (Detener cobros)">
                             <span class="material-symbols-outlined text-[18px]">cancel</span>
                         </button>
                     ` : ''}
-                    <button data-action="edit" data-id="${client.id}" class="p-2 text-slate-400 hover:text-secondary hover:bg-slate-100 rounded-xl transition-colors inline-flex items-center" title="Editar Suscripción">
+                    <button onclick="openEditModal(${client.id})" class="p-2 text-slate-400 hover:text-secondary hover:bg-slate-100 rounded-xl transition-colors inline-flex items-center" title="Editar Suscripción">
                         <span class="material-symbols-outlined text-[18px]">edit_document</span>
                     </button>
-                    <button data-action="delete" data-id="${client.id}" data-name="${escapeHtml(client.name)}" class="p-2 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors inline-flex items-center" title="Eliminar Registro">
+                    <button onclick="deleteClient(${client.id}, '${escapeHtml(client.name)}')" class="p-2 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors inline-flex items-center" title="Eliminar Registro">
                         <span class="material-symbols-outlined text-[18px]">delete</span>
                     </button>
                 </td>
@@ -206,42 +204,17 @@ function handleSearch(query) {
 }
 
 // 5. Copy Client Link
-
 function copyClientLink(code, clientName) {
-    try {
-        const host = window.location.origin;
-        const fullUrl = `${host}/?code=${encodeURIComponent(code)}`;
-        
-        // Legacy copy fallback (works everywhere)
-        const fallbackCopy = () => {
-            const el = document.createElement('textarea');
-            el.value = fullUrl;
-            document.body.appendChild(el);
-            el.select();
-            try {
-                document.execCommand('copy');
-                if (typeof showToast === 'function') showToast(`¡Enlace copiado para ${clientName}!`);
-                else alert('Enlace copiado.');
-            } catch (err) {
-                prompt('Copia este enlace manualmente:', fullUrl);
-            }
-            document.body.removeChild(el);
-        };
-
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(fullUrl).then(() => {
-                if (typeof showToast === 'function') showToast(`¡Enlace copiado para ${clientName}!`);
-                else alert('Enlace copiado.');
-            }).catch(e => {
-                fallbackCopy();
-            });
-        } else {
-            fallbackCopy();
-        }
-    } catch (err) {
-        alert("Error copiando enlace: " + err.message);
-    }
+    const host = window.location.origin;
+    const fullUrl = `${host}/?code=${encodeURIComponent(code)}`;
+    
+    navigator.clipboard.writeText(fullUrl).then(() => {
+        showToast(`¡Enlace copiado para ${clientName}! (${code})`);
+    }).catch(() => {
+        prompt('Copia este enlace de suscripción para el cliente:', fullUrl);
+    });
 }
+
 // 6. Create New Client Link with Official Prices
 function openNewClientModal() {
     document.getElementById('newClientModal').classList.remove('hidden');
@@ -391,46 +364,17 @@ async function retryPayment(clientId, clientName) {
 
 // 9. Edit Client
 function openEditModal(clientId) {
-    try {
-        const client = window.allClients.find(c => c.id === clientId) || (typeof allClients !== 'undefined' ? allClients.find(c => c.id === clientId) : null);
-        if (!client) {
-            alert("Error: Cliente no encontrado en la memoria.");
-            return;
-        }
+    const client = allClients.find(c => c.id === clientId);
+    if (!client) return;
 
-        document.getElementById('editClientId').value = client.id;
-        document.getElementById('editName').value = client.name || '';
-        document.getElementById('editContact').value = client.contact_name || '';
-        
-        const planStr = client.plan || '';
-        let planVal = 'Business';
-        if (planStr.includes('Starter')) planVal = 'Starter';
-        else if (planStr.includes('Pro')) planVal = 'Pro';
-        else if (planStr.includes('Basic')) planVal = 'Basic';
+    document.getElementById('editClientId').value = client.id;
+    document.getElementById('editName').value = client.name;
+    document.getElementById('editContact').value = client.contact_name;
+    document.getElementById('editPlan').value = client.plan.includes('Starter') ? 'Starter' : (client.plan.includes('Pro') ? 'Pro' : 'Business');
+    document.getElementById('editStatus').value = client.status;
+    document.getElementById('editAmount').value = client.recurring_amount || 29.99;
 
-        const editPlan = document.getElementById('editPlan');
-        if (editPlan) {
-            // Check if option exists, if not add it
-            const exists = Array.from(editPlan.options).some(opt => opt.value === planVal);
-            if (!exists) {
-                const opt = document.createElement('option');
-                opt.value = planVal;
-                opt.textContent = planVal;
-                editPlan.appendChild(opt);
-            }
-            editPlan.value = planVal;
-        }
-
-        const editStatus = document.getElementById('editStatus');
-        if (editStatus) editStatus.value = client.status || 'Pendiente';
-        
-        const editAmount = document.getElementById('editAmount');
-        if (editAmount) editAmount.value = client.recurring_amount || 0;
-
-        document.getElementById('editClientModal').classList.remove('hidden');
-    } catch (err) {
-        alert("Error al abrir edición: " + err.message);
-    }
+    document.getElementById('editClientModal').classList.remove('hidden');
 }
 
 function closeEditModal() {
@@ -439,16 +383,16 @@ function closeEditModal() {
 
 async function handleUpdateClient(event) {
     event.preventDefault();
-    try {
-        const id = document.getElementById('editClientId').value;
-        const payload = {
-            name: document.getElementById('editName').value.trim(),
-            contact_name: document.getElementById('editContact').value.trim(),
-            plan: document.getElementById('editPlan').value,
-            status: document.getElementById('editStatus').value,
-            recurring_amount: parseFloat(document.getElementById('editAmount').value)
-        };
+    const id = document.getElementById('editClientId').value;
+    const payload = {
+        name: document.getElementById('editName').value.trim(),
+        contact_name: document.getElementById('editContact').value.trim(),
+        plan: document.getElementById('editPlan').value,
+        status: document.getElementById('editStatus').value,
+        recurring_amount: parseFloat(document.getElementById('editAmount').value)
+    };
 
+    try {
         const res = await fetch(`/api/clients/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -458,16 +402,17 @@ async function handleUpdateClient(event) {
 
         if (res.ok && data.success) {
             closeEditModal();
-            if (typeof fetchClients === 'function') fetchClients();
-            if (typeof fetchMetrics === 'function') fetchMetrics();
+            fetchClients();
+            fetchMetrics();
             showToast('¡Suscripción actualizada exitosamente!');
         } else {
             alert('Error al actualizar: ' + (data.error || 'Intente de nuevo'));
         }
-    } catch (err) {
-        alert("Error de conexión: " + err.message);
+    } catch (e) {
+        console.error('Error updating client:', e);
     }
 }
+
 // 10. Delete Client
 async function deleteClient(id, name) {
     if (!confirm(`¿Estás seguro de eliminar el registro de "${name}"?`)) return;
@@ -575,48 +520,33 @@ function initCalendar() {
     calendar.render();
 }
 
-
 function openEventModal(calEvent = null) {
-    try {
-        const modal = document.getElementById('eventModal');
-        if (!modal) return alert("Error: No se encontró la ventana del calendario.");
-        
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        
-        const select = document.getElementById('evClient');
-        if (select) {
-            select.innerHTML = '<option value="">-- Sin Cliente Específico --</option>';
-            const clientsArray = window.allClients || (typeof allClients !== 'undefined' ? allClients : []);
-            clientsArray.forEach(c => {
-                select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
-            });
-        }
+    document.getElementById('eventModal').classList.remove('hidden');
+    document.getElementById('eventModal').classList.add('flex');
+    
+    // Poblar clientes en el select
+    const select = document.getElementById('evClient');
+    select.innerHTML = '<option value="">-- Sin Cliente Específico --</option>';
+    allClients.forEach(c => {
+        select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+    });
 
-        if (calEvent && calEvent.id) {
-            document.getElementById('eventModalTitle').textContent = 'Editar Tarea/Gasto';
-            document.getElementById('evId').value = calEvent.id || '';
-            document.getElementById('evDate').value = calEvent.startStr || '';
-            document.getElementById('evNotes').value = (calEvent.extendedProps && calEvent.extendedProps.notes) ? calEvent.extendedProps.notes : '';
-            document.getElementById('evStatus').value = (calEvent.extendedProps && calEvent.extendedProps.status) ? calEvent.extendedProps.status : 'Pendiente';
-            
-            if (select) select.value = (calEvent.extendedProps && calEvent.extendedProps.client_id) ? calEvent.extendedProps.client_id : '';
-            
-            const btnDel = document.getElementById('btnDeleteEvent');
-            if (btnDel) btnDel.classList.remove('hidden');
-        } else {
-            document.getElementById('eventModalTitle').textContent = 'Añadir Tarea/Gasto';
-            const f = document.getElementById('eventForm');
-            if (f) f.reset();
-            document.getElementById('evId').value = '';
-            
-            const btnDel = document.getElementById('btnDeleteEvent');
-            if (btnDel) btnDel.classList.add('hidden');
-        }
-    } catch (err) {
-        alert("Error al abrir evento: " + err.message);
+    if (calEvent) {
+        document.getElementById('eventModalTitle').textContent = 'Editar Tarea/Gasto';
+        document.getElementById('evId').value = calEvent.id;
+        document.getElementById('evDate').value = calEvent.startStr;
+        document.getElementById('evNotes').value = calEvent.extendedProps.notes;
+        document.getElementById('evStatus').value = calEvent.extendedProps.status;
+        document.getElementById('evClient').value = calEvent.extendedProps.client_id || '';
+        document.getElementById('btnDeleteEvent').classList.remove('hidden');
+    } else {
+        document.getElementById('eventModalTitle').textContent = 'Añadir Tarea/Gasto';
+        document.getElementById('eventForm').reset();
+        document.getElementById('evId').value = '';
+        document.getElementById('btnDeleteEvent').classList.add('hidden');
     }
 }
+
 function closeEventModal() {
     document.getElementById('eventModal').classList.add('hidden');
     document.getElementById('eventModal').classList.remove('flex');
@@ -674,8 +604,6 @@ async function deleteEvent() {
 document.addEventListener('DOMContentLoaded', () => {
     const f = document.getElementById('eventForm');
     if(f) f.addEventListener('submit', saveEvent);
-    
-
 });
 
 
@@ -729,41 +657,12 @@ function searchCalendarClients(query) {
 }
 
 
-function calcInitial(multiplier) {
+window.calcInitial = function(multiplier) {
     const total = parseFloat(document.getElementById('ncProjectTotal').value);
     if (!isNaN(total) && total > 0) {
         document.getElementById('ncInitialAmount').value = (total * multiplier).toFixed(2);
     } else {
         alert('Por favor, ingresa el Costo Total del Proyecto primero.');
         document.getElementById('ncProjectTotal').focus();
-    }
-};
-
-
-window.handleTableClick = function(btn) {
-    try {
-    if (!btn) return;
-    const action = btn.getAttribute('data-action');
-    const id = btn.getAttribute('data-id');
-    const name = btn.getAttribute('data-name');
-    const code = btn.getAttribute('data-code');
-    
-    if (action === 'copy') {
-        if (typeof copyClientLink === 'function') copyClientLink(code, name);
-    }
-    if (action === 'edit') {
-        if (typeof openEditModal === 'function') openEditModal(parseInt(id));
-    }
-    if (action === 'delete') {
-        if (typeof deleteClient === 'function') deleteClient(parseInt(id), name);
-    }
-    if (action === 'retry') {
-        if (typeof retryPayment === 'function') retryPayment(parseInt(id), name);
-    }
-    if (action === 'cancel') {
-        if (typeof cancelSubscriptionAdmin === 'function') cancelSubscriptionAdmin(parseInt(id), name);
-    }
-    } catch (err) {
-        alert("CRITICAL ERROR IN CLICK HANDLER: " + err.message);
     }
 };

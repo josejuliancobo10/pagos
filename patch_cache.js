@@ -1,4 +1,7 @@
 const fs = require('fs');
-let html = fs.readFileSync('public/admin.html', 'utf8');
-html = html.replace(/src="js\/admin\.js[^"]*"/, 'src="js/admin.js?v=' + Date.now() + '"');
-fs.writeFileSync('public/admin.html', html);
+
+let adminHtml = fs.readFileSync('public/admin.html', 'utf8');
+const version = Date.now();
+adminHtml = adminHtml.replace(/<script src="\/js\/admin\.js(\?v=\d+)?"\><\/script>/, `<script src="/js/admin.js?v=${version}"></script>`);
+fs.writeFileSync('public/admin.html', adminHtml);
+console.log("Cache buster applied to reverted admin.html");
