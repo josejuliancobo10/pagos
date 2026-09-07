@@ -99,8 +99,17 @@ async function verifyAccessCode(code) {
                     if (titleEl) titleEl.textContent = data.client.planNameClean.toUpperCase();
                     
                     const priceEl = card.querySelector('.text-4xl');
-                    if (priceEl && data.client.recurring_amount !== undefined) {
-                        priceEl.textContent = '$' + parseFloat(data.client.recurring_amount).toFixed(2);
+                    if (priceEl) {
+                        const hasActivation = data.client.activation_fee && parseFloat(data.client.activation_fee) > 0;
+                        if (hasActivation) {
+                            priceEl.textContent = '$' + parseFloat(data.client.activation_fee).toFixed(2);
+                            const suffixEl = priceEl.nextElementSibling;
+                            if (suffixEl) suffixEl.textContent = '/pago inicial';
+                        } else if (data.client.recurring_amount !== undefined) {
+                            priceEl.textContent = '$' + parseFloat(data.client.recurring_amount).toFixed(2);
+                            const suffixEl = priceEl.nextElementSibling;
+                            if (suffixEl) suffixEl.textContent = '/año';
+                        }
                     }
 
                     if (data.client.customFeatures) {
