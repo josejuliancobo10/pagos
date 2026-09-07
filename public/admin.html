@@ -252,7 +252,7 @@
                                 <th class="py-4 px-6 text-right">Acciones de Suscripción</th>
                             </tr>
                         </thead>
-                        <tbody id="clientsTableBody" class="divide-y divide-outline-variant text-xs text-on-surface">
+                        <tbody id="clientsTableBody" class="divide-y divide-outline-variant text-xs text-on-surface" onclick="window.handleTableClick(event.target.closest('button[data-action]'))">
                             <tr>
                                 <td colspan="6" class="py-8 text-center text-outline">Cargando suscripciones...</td>
                             </tr>
@@ -269,7 +269,7 @@
                         <h2 class="text-3xl md:text-4xl font-black text-on-surface tracking-tight">Calendario de Tareas</h2>
                         <p class="text-xs md:text-sm text-on-surface-variant mt-1">Controla las renovaciones y gastos por cliente.</p>
                     </div>
-                    <button id="btnAddEvent" class="bg-primary hover:bg-[#3d0291] text-white px-5 py-2.5 rounded-xl font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2 text-sm">
+                    <button id="btnAddEvent" onclick="if(typeof openEventModal === 'function') openEventModal();" class="bg-primary hover:bg-[#3d0291] text-white px-5 py-2.5 rounded-xl font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2 text-sm">
                         <span class="material-symbols-outlined text-[20px]">add</span>
                         Nuevo Evento
                     </button>
@@ -467,7 +467,7 @@ Soporte prioritario"></textarea>
     </div>
 
     <!-- Admin JS -->
-    <script src="/js/admin.js?v=1788744656432"></script>
+    <script src="/js/admin.js?v=1788749565397"></script>
 
     <!-- EVENT MODAL -->
     <div id="eventModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 blur-backdrop p-4">

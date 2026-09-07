@@ -54,24 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const lock = document.getElementById('adminLockScreen'); if(lock) lock.style.display = 'none';
     fetchMetrics();
     fetchClients();
-    const tbody = document.getElementById('clientsTableBody');
-    if (tbody) {
-        tbody.addEventListener('click', (e) => {
-            const btn = e.target.closest('button[data-action]');
-            if (!btn) return;
-            
-            const action = btn.getAttribute('data-action');
-            const id = btn.getAttribute('data-id');
-            const name = btn.getAttribute('data-name');
-            const code = btn.getAttribute('data-code');
-            
-            if (action === 'copy') copyClientLink(code, name);
-            if (action === 'edit') openEditModal(parseInt(id));
-            if (action === 'delete') deleteClient(parseInt(id), name);
-            if (action === 'retry') retryPayment(parseInt(id), name);
-            if (action === 'cancel') cancelSubscriptionAdmin(parseInt(id), name);
-        });
-    }
+    
 
 });
 
@@ -691,10 +674,7 @@ async function deleteEvent() {
 document.addEventListener('DOMContentLoaded', () => {
     const f = document.getElementById('eventForm');
     if(f) f.addEventListener('submit', saveEvent);
-    const btnAddEvent = document.getElementById('btnAddEvent');
-    if (btnAddEvent) {
-        btnAddEvent.addEventListener('click', () => openEventModal());
-    }
+    
 
 });
 
@@ -756,5 +736,34 @@ function calcInitial(multiplier) {
     } else {
         alert('Por favor, ingresa el Costo Total del Proyecto primero.');
         document.getElementById('ncProjectTotal').focus();
+    }
+};
+
+
+window.handleTableClick = function(btn) {
+    try {
+    if (!btn) return;
+    const action = btn.getAttribute('data-action');
+    const id = btn.getAttribute('data-id');
+    const name = btn.getAttribute('data-name');
+    const code = btn.getAttribute('data-code');
+    
+    if (action === 'copy') {
+        if (typeof copyClientLink === 'function') copyClientLink(code, name);
+    }
+    if (action === 'edit') {
+        if (typeof openEditModal === 'function') openEditModal(parseInt(id));
+    }
+    if (action === 'delete') {
+        if (typeof deleteClient === 'function') deleteClient(parseInt(id), name);
+    }
+    if (action === 'retry') {
+        if (typeof retryPayment === 'function') retryPayment(parseInt(id), name);
+    }
+    if (action === 'cancel') {
+        if (typeof cancelSubscriptionAdmin === 'function') cancelSubscriptionAdmin(parseInt(id), name);
+    }
+    } catch (err) {
+        alert("CRITICAL ERROR IN CLICK HANDLER: " + err.message);
     }
 };
