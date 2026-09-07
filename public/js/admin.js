@@ -205,7 +205,7 @@ function handleSearch(query) {
 
 // 5. Copy Client Link
 
-window.copyClientLink = function(code, clientName) {
+function copyClientLink(code, clientName) {
     try {
         const host = window.location.origin;
         const fullUrl = `${host}/?code=${encodeURIComponent(code)}`;
@@ -388,7 +388,7 @@ async function retryPayment(clientId, clientName) {
 }
 
 // 9. Edit Client
-window.openEditModal = function(clientId) {
+function openEditModal(clientId) {
     try {
         const client = window.allClients.find(c => c.id === clientId) || (typeof allClients !== 'undefined' ? allClients.find(c => c.id === clientId) : null);
         if (!client) {
@@ -431,11 +431,11 @@ window.openEditModal = function(clientId) {
     }
 }
 
-window.closeEditModal = function() {
+function closeEditModal() {
     document.getElementById('editClientModal').classList.add('hidden');
 }
 
-window.handleUpdateClient = async function(event) {
+async function handleUpdateClient(event) {
     event.preventDefault();
     try {
         const id = document.getElementById('editClientId').value;
@@ -574,7 +574,7 @@ function initCalendar() {
 }
 
 
-window.openEventModal = function(calEvent = null) {
+function openEventModal(calEvent = null) {
     try {
         const modal = document.getElementById('eventModal');
         if (!modal) return alert("Error: No se encontró la ventana del calendario.");
@@ -725,7 +725,7 @@ function searchCalendarClients(query) {
 }
 
 
-window.calcInitial = function(multiplier) {
+function calcInitial(multiplier) {
     const total = parseFloat(document.getElementById('ncProjectTotal').value);
     if (!isNaN(total) && total > 0) {
         document.getElementById('ncInitialAmount').value = (total * multiplier).toFixed(2);
