@@ -161,7 +161,7 @@ function renderClientsTable(clients) {
                 </td>
                 <td class="py-4 px-6">${statusBadge}</td>
                 <td class="py-4 px-6 text-right space-x-1 whitespace-nowrap">
-                    <button onclick="copyClientLink('${client.access_code}', '${escapeHtml(client.name)}')" class="p-2 text-slate-400 hover:text-primary hover:bg-slate-100 rounded-xl transition-colors inline-flex items-center" title="Copiar Enlace de Suscripción">
+                    <button onclick="copyClientLink(this)" data-code="${client.access_code}" data-name="${escapeHtml(client.name)}" class="p-2 text-slate-400 hover:text-primary hover:bg-slate-100 rounded-xl transition-colors inline-flex items-center" title="Copiar Enlace de Suscripción">
                         <span class="material-symbols-outlined text-[18px]">link</span>
                     </button>
                     ${statusLower.includes('fallo') ? `
@@ -174,7 +174,7 @@ function renderClientsTable(clients) {
                             <span class="material-symbols-outlined text-[18px]">cancel</span>
                         </button>
                     ` : ''}
-                    <button onclick="openEditModal(${client.id})" class="p-2 text-slate-400 hover:text-secondary hover:bg-slate-100 rounded-xl transition-colors inline-flex items-center" title="Editar Suscripción">
+                    <button onclick="openEditModal(this)" data-id="${client.id}" class="p-2 text-slate-400 hover:text-secondary hover:bg-slate-100 rounded-xl transition-colors inline-flex items-center" title="Editar Suscripción">
                         <span class="material-symbols-outlined text-[18px]">edit_document</span>
                     </button>
                     <button onclick="deleteClient(${client.id}, '${escapeHtml(client.name)}')" class="p-2 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors inline-flex items-center" title="Eliminar Registro">
@@ -204,11 +204,13 @@ function handleSearch(query) {
 }
 
 // 5. Copy Client Link
-function copyClientLink(code, clientName) {
+function copyClientLink(btnOrCode, optionalName) {
+    var code = typeof btnOrCode === 'string' ? btnOrCode : btnOrCode.getAttribute('data-code');
+    var clientName = typeof btnOrCode === 'string' ? optionalName : btnOrCode.getAttribute('data-name');
     const host = window.location.origin;
     const fullUrl = host + '/?code=' + encodeURIComponent(code);
     
-    const fallbackCopy = () => {
+    var fallbackCopy = function() {
         const el = document.createElement('textarea');
         el.value = fullUrl;
         document.body.appendChild(el);
@@ -379,7 +381,8 @@ async function retryPayment(clientId, clientName) {
 }
 
 // 9. Edit Client
-function openEditModal(clientId) {
+function openEditModal(btn) {
+    var clientId = parseInt(btn.getAttribute('data-id'), 10);
     const client = allClients.find(c => c.id === clientId);
     if (!client) return;
 
@@ -536,7 +539,7 @@ function initCalendar() {
     calendar.render();
 }
 
-function openEventModal(calEvent = null) {
+function openEventModal(calEvent) {
     document.getElementById('eventModal').classList.remove('hidden');
     document.getElementById('eventModal').classList.add('flex');
     
