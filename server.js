@@ -27,7 +27,7 @@ async function supabaseQuery(endpoint, method = 'GET', body = null) {
   if (!res.ok) {
     const errText = await res.text();
     console.error(`Supabase Error [${method} ${endpoint}]:`, errText);
-    throw new Error(`DB Error: ${res.statusText}`);
+    throw new Error(`DB Error: ${res.statusText} - ${errText}`);
   }
   
   if (res.status === 204) return [];
