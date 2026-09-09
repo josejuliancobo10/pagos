@@ -77,7 +77,7 @@
         .material-symbols-outlined[data-weight="fill"] {
             font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
-        .blur-backdrop {
+        . {
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
         }
@@ -300,7 +300,7 @@ Admin Billing
     </main>
 
     <!-- Modal: Generar Link de Pago -->
-    <div id="newClientModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/50 blur-backdrop p-4">
+    <div id="newClientModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/50  p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 md:p-8 shadow-2xl border border-outline-variant relative">
             <div class="flex justify-between items-center mb-6 pb-3 border-b border-outline-variant">
                 <div class="flex items-center gap-2">
@@ -398,7 +398,7 @@ Soporte prioritario"></textarea>
     </div>
 
     <!-- Modal: Editar Acuerdo / Suscripción -->
-    <div id="editClientModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/50 blur-backdrop p-4">
+    <div id="editClientModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/50  p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 md:p-8 shadow-2xl border border-outline-variant relative">
             <div class="flex justify-between items-center mb-6 pb-3 border-b border-outline-variant">
                 <div class="flex items-center gap-2">
@@ -467,10 +467,10 @@ Soporte prioritario"></textarea>
     </div>
 
     <!-- Admin JS -->
-    <script src="/js/admin.js?v=1788923650067"></script>
+    <script src="/js/admin.js?v=1788923965752"></script>
 
     <!-- EVENT MODAL -->
-    <div id="eventModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 blur-backdrop p-4">
+    <div id="eventModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50  p-4">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 md:p-8 shadow-2xl border border-outline-variant relative">
             <button onclick="closeEventModal()" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600 transition-colors">
                 <span class="material-symbols-outlined">close</span>

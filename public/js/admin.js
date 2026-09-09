@@ -161,16 +161,16 @@ function renderClientsTable(clients) {
                 </td>
                 <td class="py-4 px-6">${statusBadge}</td>
                 <td class="py-4 px-6 text-right space-x-1 whitespace-nowrap">
-                    <button onclick="copyClientLink(this)" data-code="${client.access_code}" data-name="${escapeHtml(client.name)}" class="p-2 text-slate-400 hover:text-primary hover:bg-slate-100 rounded-xl transition-colors inline-flex items-center" title="Copiar Enlace de Suscripción">
+                    <button data-code="${client.access_code}" data-name="${escapeHtml(client.name)}" class="btn-copy p-2 text-slate-400 hover:text-primary hover:bg-slate-100 rounded-xl transition-colors inline-flex items-center" title="Copiar Enlace de Suscripción">
                         <span class="material-symbols-outlined text-[18px]">link</span>
                     </button>
                     ${statusLower.includes('fallo') ? `
-                        <button onclick="retryPayment(${client.id}, '${escapeHtml(client.name)}')" class="p-2 text-amber-600 hover:text-amber-800 hover:bg-amber-50 rounded-xl transition-colors inline-flex items-center" title="Reintentar Cobro">
+                        <button data-id="${client.id}" data-name="${escapeHtml(client.name)}" class="btn-retry p-2 text-amber-600 hover:text-amber-800 hover:bg-amber-50 rounded-xl transition-colors inline-flex items-center" title="Reintentar Cobro">
                             <span class="material-symbols-outlined text-[18px]">replay</span>
                         </button>
                     ` : ''}
                     ${statusLower === 'activo' ? `
-                        <button onclick="cancelSubscriptionAdmin(${client.id}, '${escapeHtml(client.name)}')" class="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition-colors inline-flex items-center" title="Cancelar Suscripción (Detener cobros)">
+                        <button data-id="${client.id}" data-name="${escapeHtml(client.name)}" class="btn-cancel p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition-colors inline-flex items-center" title="Cancelar Suscripción (Detener cobros)">
                             <span class="material-symbols-outlined text-[18px]">cancel</span>
                         </button>
                     ` : ''}
