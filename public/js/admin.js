@@ -587,21 +587,23 @@ async function saveEvent(e) {
     };
     
     try {
-        if (id) {
-            await fetch(`/api/calendar/${id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-        } else {
-            await fetch('/api/calendar', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-        }
-        closeEventModal();
-        if(calendar) calendar.refetchEvents();
+        let res;
+          if (id) {
+              res = await fetch(`/api/calendar/${id}`, {
+                  method: 'PATCH',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload)
+              });
+          } else {
+              res = await fetch('/api/calendar', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload)
+              });
+          }
+          if (!res.ok) throw new Error('Error en el servidor');
+          closeEventModal();
+          if(calendar) calendar.refetchEvents();
     } catch(err) {
         alert('Error al guardar el evento');
     }
