@@ -498,7 +498,7 @@ function initCalendar() {
         },
         events: async function(info, successCallback, failureCallback) {
             try {
-                const res = await adminFetch('/api/calendar');
+                const res = await fetch('/api/calendar');
                 const data = await res.json();
                 if(data.events) {
                     currentEvents = data.events;
@@ -588,13 +588,15 @@ async function saveEvent(e) {
     
     try {
         if (id) {
-            await adminFetch(`/api/calendar/${id}`, {
+            await fetch(`/api/calendar/${id}`, {
                 method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
         } else {
-            await adminFetch('/api/calendar', {
+            await fetch('/api/calendar', {
                 method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
         }
@@ -611,7 +613,7 @@ async function deleteEvent() {
     if(!id) return;
     
     try {
-        await adminFetch(`/api/calendar/${id}`, { method: 'DELETE' });
+        await fetch(`/api/calendar/${id}`, { method: 'DELETE' });
         closeEventModal();
         if(calendar) calendar.refetchEvents();
     } catch(err) {
