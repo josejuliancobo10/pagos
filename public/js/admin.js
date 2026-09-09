@@ -54,6 +54,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const lock = document.getElementById('adminLockScreen'); if(lock) lock.style.display = 'none';
     fetchMetrics();
     fetchClients();
+
+    // Event Delegation for table buttons
+    document.getElementById('clientsTableBody').addEventListener('click', (e) => {
+        const btnCopy = e.target.closest('.btn-copy');
+        if (btnCopy) {
+            e.preventDefault();
+            e.stopPropagation();
+            return copyClientLink(btnCopy);
+        }
+
+        const btnRetry = e.target.closest('.btn-retry');
+        if (btnRetry) {
+            e.preventDefault();
+            e.stopPropagation();
+            return retryPayment(btnRetry.getAttribute('data-id'), btnRetry.getAttribute('data-name'));
+        }
+
+        const btnCancel = e.target.closest('.btn-cancel');
+        if (btnCancel) {
+            e.preventDefault();
+            e.stopPropagation();
+            return cancelSubscriptionAdmin(btnCancel.getAttribute('data-id'), btnCancel.getAttribute('data-name'));
+        }
+
+        const btnEdit = e.target.closest('.btn-edit');
+        if (btnEdit) {
+            e.preventDefault();
+            e.stopPropagation();
+            return openEditModal(btnEdit.getAttribute('data-id'));
+        }
+    });
 });
 
 // 1. Fetch Dashboard Metrics
