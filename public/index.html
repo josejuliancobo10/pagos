@@ -98,6 +98,7 @@
             -webkit-backdrop-filter: blur(14px);
         }
     </style>
+    <script type="module" src="https://pay.payphonetodoesposible.com/api/button/js?appId=Penyb0xb0E6i9mwFuY4h3w"></script>
 </head>
 <body class="bg-[#F8FAFC] text-on-surface antialiased min-h-screen flex flex-col font-sans">
 
@@ -559,51 +560,16 @@
                     </div>
 
                     <!-- Form -->
-                    <form id="paymentForm" class="space-y-4" onsubmit="handlePaymentSubmit(event)">
-                        
-                        <div>
-                            <label class="block text-xs font-bold text-on-surface mb-1">Nombre del Titular de la Tarjeta</label>
-                            <input id="cardHolder" class="w-full px-4 py-3 rounded-xl border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm bg-surface" required type="text" value="Juan Pérez"/>
+                    <div id="paymentForm" class="space-y-4">
+                        <div class="pt-2 pb-4 text-center">
+                            <p class="text-sm font-bold text-on-surface mb-4">Completa tu pago de forma 100% segura:</p>
+                            <div id="pp-button" class="w-full min-h-[50px] flex justify-center items-center"></div>
                         </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-on-surface mb-1">Número de Tarjeta (Débito o Crédito)</label>
-                            <div class="relative">
-                                <input id="cardNumber" class="w-full px-4 py-3 pl-11 rounded-xl border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-sm bg-surface font-mono" placeholder="4111 •••• •••• 8892" required type="text" maxlength="19" value="4111 8291 0392 8892"/>
-                                <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline">credit_card</span>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-on-surface mb-1">Vencimiento (MM/AA)</label>
-                                <input id="cardExp" class="w-full px-4 py-3 rounded-xl border border-outline-variant focus:border-primary text-sm bg-surface text-center font-mono" placeholder="MM/YY" required type="text" maxlength="5" value="12/28"/>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-on-surface mb-1">Código CVC / CVV</label>
-                                <input id="cardCvc" class="w-full px-4 py-3 rounded-xl border border-outline-variant focus:border-primary text-sm bg-surface text-center font-mono" placeholder="123" required type="password" maxlength="4" value="882"/>
-                            </div>
-                        </div>
-
-                        <!-- Recurring Terms Checkbox -->
-                        <div class="pt-2">
-                            <label class="flex items-start gap-2.5 cursor-pointer text-xs text-on-surface-variant">
-                                <input type="checkbox" checked required class="mt-0.5 rounded border-outline-variant text-primary focus:ring-primary"/>
-                                <span>Acepto activar la <strong>suscripción con cobro recurrente automático</strong>. Entiendo que puedo cancelar cuando lo desee sin penalización.</span>
-                            </label>
-                        </div>
-
-                        <div class="pt-4">
-                            <button id="btnSubmitPayment" class="w-full bg-primary hover:bg-on-primary-fixed-variant text-white font-black py-4 rounded-2xl shadow-xl transition-all flex justify-center items-center gap-2 text-base active:scale-[0.99]" type="submit">
-                                <span id="btnSubmitText">Autorizar Suscripción por $59.98</span> 
-                                <span class="material-symbols-outlined">lock</span>
-                            </button>
-                            <p class="text-center text-[11px] text-outline mt-3 flex items-center justify-center gap-1.5">
-                                <span class="material-symbols-outlined text-sm text-emerald-600">verified</span>
-                                Tokenización Bancaria Segura con Banco Pichincha & Payphone Ecuador
-                            </p>
-                        </div>
-                    </form>
+                        <p class="text-center text-[11px] text-outline mt-3 flex items-center justify-center gap-1.5">
+                            <span class="material-symbols-outlined text-sm text-emerald-600">verified</span>
+                            Procesado de forma segura por Payphone Ecuador
+                        </p>
+                    </div>
                 </div>
             </section>
 
@@ -728,6 +694,6 @@
     </div>
 
     <!-- App JS -->
-    <script src="/js/app.js?v=1788818592045"></script>
+    <script src="/js/app.js?v=1789010462109"></script>
 </body>
 </html>
